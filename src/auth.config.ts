@@ -10,18 +10,20 @@ export const authConfig = {
       const isAuthRoute = nextUrl.pathname.startsWith("/login") || nextUrl.pathname.startsWith("/signup");
       const isApiRoute = nextUrl.pathname.startsWith("/api");
 
-      if (isApiRoute) {
-        return true; // Let the API requests through
+      const isPublicRoute = nextUrl.pathname === "/";
+
+      if (isApiRoute || isPublicRoute) {
+        return true; // Let the API requests and landing page through
       }
 
       if (isAuthRoute) {
         if (isLoggedIn) {
-          return Response.redirect(new URL("/", nextUrl));
+          return Response.redirect(new URL("/dashboard", nextUrl));
         }
         return true; 
       }
 
-      // Restrict all other routes (dashboard, etc.)
+      // Restrict all other routes (dashboard, onboarding, etc.)
       if (!isLoggedIn) {
         return false; // redirects back to signIn page
       }

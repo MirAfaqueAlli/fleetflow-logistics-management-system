@@ -25,7 +25,7 @@ export default function OnboardingPage() {
             if (result.success) {
                 // Update the session client-side to reflect the new role
                 await update({ role });
-                router.push("/");
+                router.push("/dashboard");
                 router.refresh();
             } else {
                 setError(result.error || "Failed to update role");
@@ -68,8 +68,8 @@ export default function OnboardingPage() {
                                         type="button"
                                         onClick={() => setRole(item.value)}
                                         className={`p-4 rounded-xl border transition-all text-left group ${role === item.value
-                                                ? "bg-[#60519b]/20 border-[#60519b] ring-1 ring-[#60519b]"
-                                                : "bg-[#1e202c] border-[#bfc0d1]/10 hover:border-[#60519b]/50"
+                                            ? "bg-[#60519b]/20 border-[#60519b] ring-1 ring-[#60519b]"
+                                            : "bg-[#1e202c] border-[#bfc0d1]/10 hover:border-[#60519b]/50"
                                             }`}
                                     >
                                         <div className="font-bold text-white group-hover:text-[#7b6ac6] transition-colors">{item.label}</div>
