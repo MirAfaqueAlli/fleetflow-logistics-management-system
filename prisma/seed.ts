@@ -12,13 +12,13 @@ async function main() {
 
   console.log('Seeding Vehicles...')
   const vehicles = [
-    { name: 'Trailer Truck-01', model: 'Volvo VNL',          licensePlate: 'MH-12-AB-1234', maxLoadCapacity: 20000, status: VehicleStatus.AVAILABLE, odometer: 15400 },
-    { name: 'Van-05',           model: 'Ford Transit',        licensePlate: 'MH-14-XY-9876', maxLoadCapacity: 1000,  status: VehicleStatus.AVAILABLE, odometer: 3200  },
-    { name: 'Bike-02',          model: 'Honda Activa',        licensePlate: 'MH-09-PQ-4567', maxLoadCapacity: 50,    status: VehicleStatus.AVAILABLE, odometer: 1250  },
-    { name: 'Trailer Truck-02', model: 'Scania R500',         licensePlate: 'MH-12-CD-5678', maxLoadCapacity: 20000, status: VehicleStatus.ON_TRIP,   odometer: 42000 },
-    { name: 'Box Truck-03',     model: 'Isuzu NQR',           licensePlate: 'MH-02-ZZ-1111', maxLoadCapacity: 5000,  status: VehicleStatus.IN_SHOP,   odometer: 78000 },
-    { name: 'Van-08',           model: 'Mercedes Sprinter',   licensePlate: 'MH-01-AA-4444', maxLoadCapacity: 1500,  status: VehicleStatus.AVAILABLE, odometer: 150   },
-    { name: 'Bike-05',          model: 'TVS XL100',           licensePlate: 'MH-43-BB-9999', maxLoadCapacity: 60,    status: VehicleStatus.AVAILABLE, odometer: 800   },
+    { name: 'Trailer Truck', model: 'Volvo VNL',          licensePlate: 'MH-12-AB-1234', maxLoadCapacity: 20000, status: VehicleStatus.AVAILABLE, odometer: 15400 },
+    { name: 'Van',           model: 'Ford Transit',        licensePlate: 'MH-14-XY-9876', maxLoadCapacity: 1000,  status: VehicleStatus.AVAILABLE, odometer: 3200  },
+    { name: 'Bike',          model: 'Honda Activa',        licensePlate: 'MH-09-PQ-4567', maxLoadCapacity: 50,    status: VehicleStatus.AVAILABLE, odometer: 1250  },
+    { name: 'Trailer Truck', model: 'Scania R500',         licensePlate: 'MH-12-CD-5678', maxLoadCapacity: 20000, status: VehicleStatus.ON_TRIP,   odometer: 42000 },
+    { name: 'Box Truck',     model: 'Isuzu NQR',           licensePlate: 'MH-02-ZZ-1111', maxLoadCapacity: 5000,  status: VehicleStatus.IN_SHOP,   odometer: 78000 },
+    { name: 'Van',           model: 'Mercedes Sprinter',   licensePlate: 'MH-01-AA-4444', maxLoadCapacity: 1500,  status: VehicleStatus.AVAILABLE, odometer: 150   },
+    { name: 'Bike',          model: 'TVS XL100',           licensePlate: 'MH-43-BB-9999', maxLoadCapacity: 60,    status: VehicleStatus.AVAILABLE, odometer: 800   },
   ]
 
   const createdVehicles = []
@@ -26,11 +26,8 @@ async function main() {
     createdVehicles.push(await prisma.vehicle.create({ data: v }))
   }
 
-  // Vehicle shortcuts for readability
-  const [truck01, van05, bike02, truck02, boxTruck03, van08, bike05] = createdVehicles
-
   console.log('Seeding Drivers...')
-  const today   = new Date()
+  const today   = new Date('2024-12-01') // Treat today as Dec 2024 for seeding
   const nextYear = new Date(today); nextYear.setFullYear(today.getFullYear() + 1)
   const pastYear = new Date(today); pastYear.setFullYear(today.getFullYear() - 2)
 
@@ -48,89 +45,79 @@ async function main() {
     createdDrivers.push(await prisma.driver.create({ data: d }))
   }
 
-  console.log('Seeding Trips...')
-  const trips = [
-    {
-      origin: 'Mumbai', destination: 'Pune',
-      cargoWeight: 15000, status: TripStatus.DISPATCHED,
-      vehicleId: truck02.id,
-      driverId: createdDrivers[2].id, // Suresh Patel (ON_DUTY)
-    },
-    {
-      origin: 'Delhi', destination: 'Noida',
-      cargoWeight: 800, status: TripStatus.COMPLETED,
-      vehicleId: van05.id,
-      driverId: createdDrivers[1].id, // Amit Singh
-      finalOdometer: 3400,
-    },
-    {
-      origin: 'Bangalore', destination: 'Chennai',
-      cargoWeight: 1200, status: TripStatus.COMPLETED,
-      vehicleId: bike02.id,
-      driverId: createdDrivers[3].id, // Vikram Sharma
-      finalOdometer: 1380,
-    },
-    {
-      origin: 'Hyderabad', destination: 'Vijayawada',
-      cargoWeight: 900, status: TripStatus.COMPLETED,
-      vehicleId: van08.id,
-      driverId: createdDrivers[5].id, // Ravi Teja
-      finalOdometer: 280,
-    },
-    {
-      origin: 'Pune', destination: 'Nashik',
-      cargoWeight: 45,  status: TripStatus.COMPLETED,
-      vehicleId: bike05.id,
-      driverId: createdDrivers[0].id, // Rajesh Kumar
-      finalOdometer: 870,
-    },
-  ]
+  console.log('Seeding 12 Months of Historical Analytics Data...')
+  
+  // Create trips and expenses spanning Jan -> Dec 2024
+  for (let month = 0; month < 12; month++) { // 0 = Jan, 11 = Dec
+    
+    // Each month, let's randomly create 3-6 trips
+    const numTrips = Math.floor(Math.random() * 4) + 3;
+    
+    for (let t = 0; t < numTrips; t++) {
+        // Random assignees
+        const v = createdVehicles[Math.floor(Math.random() * createdVehicles.length)]
+        const d = createdDrivers[Math.floor(Math.random() * createdDrivers.length)]
+        
+        // Random date in that month
+        const tripDate = new Date(2024, month, Math.floor(Math.random() * 28) + 1)
+        
+        // Random cargo (bound by vehicle max capacity safely)
+        const cargo = Math.floor(Math.random() * (v.maxLoadCapacity * 0.8)) + (v.maxLoadCapacity * 0.1)
 
-  const createdTrips = []
-  for (const t of trips) {
-    createdTrips.push(await prisma.trip.create({ data: t }))
+        // Random fuel cost and liters
+        const fuelCost = Math.floor(Math.random() * 3000) + 500
+        const liters = Math.floor(fuelCost / 100)
+
+        // Add the trip
+        await prisma.trip.create({
+            data: {
+                origin: ['Mumbai', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad'][Math.floor(Math.random() * 5)],
+                destination: ['Nashik', 'Noida', 'Chennai', 'Surat', 'Vijayawada'][Math.floor(Math.random() * 5)],
+                cargoWeight: cargo,
+                status: month === 11 && t === 0 ? TripStatus.DISPATCHED : TripStatus.COMPLETED,
+                vehicleId: v.id,
+                driverId: d.id,
+                finalOdometer: v.odometer + Math.floor(Math.random() * 500) + 100,
+                createdAt: tripDate,
+            }
+        });
+
+        // Add the corresponding fuel expense
+        await prisma.expense.create({
+            data: {
+                vehicleId: v.id,
+                cost: fuelCost,
+                liters: liters,
+                type: 'FUEL',
+                date: tripDate,
+            }
+        });
+
+        // Random 15% chance of maintenance in a month
+        if (Math.random() > 0.85) {
+            const maintCost = Math.floor(Math.random() * 8000) + 2000;
+            const issueArr = ['Engine Check', 'Brake Pad Replacement', 'Oil Change', 'Tyre Replacement'];
+            await prisma.maintenanceLog.create({
+                data: {
+                    vehicleId: v.id,
+                    serviceType: issueArr[Math.floor(Math.random() * issueArr.length)],
+                    cost: maintCost,
+                    date: tripDate,
+                }
+            });
+            await prisma.expense.create({
+                data: {
+                    vehicleId: v.id,
+                    cost: maintCost,
+                    type: 'MAINTENANCE',
+                    date: tripDate,
+                }
+            });
+        }
+    }
   }
 
-  console.log('Seeding Maintenance Logs...')
-  const maintenanceLogs = [
-    {
-      vehicleId: boxTruck03.id,
-      serviceType: 'Engine Issue',
-      cost: 10000,
-      date: new Date('2024-02-20'),
-    },
-    {
-      vehicleId: van05.id,
-      serviceType: 'Oil Change',
-      cost: 1500,
-      date: new Date('2024-02-15'),
-    },
-    {
-      vehicleId: truck01.id,
-      serviceType: 'Brake Pad Replacement',
-      cost: 5000,
-      date: new Date('2024-02-10'),
-    },
-  ]
-
-  for (const m of maintenanceLogs) {
-    await prisma.maintenanceLog.create({ data: m })
-  }
-
-  console.log('Seeding Fuel Expenses...')
-  const fuelExpenses = [
-    { vehicleId: van05.id,    cost: 1000, liters: 83,  type: 'FUEL', date: new Date('2024-02-21') },
-    { vehicleId: truck02.id,  cost: 750,  liters: 62,  type: 'FUEL', date: new Date('2024-02-20') },
-    { vehicleId: bike02.id,   cost: 1800, liters: 150, type: 'FUEL', date: new Date('2024-02-19') },
-    { vehicleId: van08.id,    cost: 1150, liters: 96,  type: 'FUEL', date: new Date('2024-02-18') },
-    { vehicleId: bike05.id,   cost: 400,  liters: 33,  type: 'FUEL', date: new Date('2024-02-17') },
-  ]
-
-  for (const e of fuelExpenses) {
-    await prisma.expense.create({ data: e })
-  }
-
-  console.log('✅ Seeding Complete!')
+  console.log('✅ Analytical Seeding Complete! Jan-Dec 2024 data inserted.')
 }
 
 main()
