@@ -7,9 +7,9 @@ import {
     MapPin,
     Search,
     Plus,
-    ChevronDown,
     X
 } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { getStatusStyling } from "@/lib/mock-data";
 import { toast } from "sonner";
@@ -79,18 +79,13 @@ export default function DashboardClient({ initialFleetData }: { initialFleetData
                         { value: filterStatus, setter: setFilterStatus, options: ["All Statuses", "On Trip", "In Shop", "Ready"] },
                         { value: filterRegion, setter: setFilterRegion, options: ["All Regions", "North", "South", "East", "West"] }
                     ].map((filter, idx) => (
-                        <div key={idx} className="relative">
-                            <select
-                                className="glass-panel px-4 py-2.5 rounded-full text-sm font-medium appearance-none pr-10 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] transition-colors text-[var(--foreground)] outline-none"
-                                value={filter.value}
-                                onChange={(e) => filter.setter(e.target.value)}
-                            >
-                                {filter.options.map(opt => (
-                                    <option key={opt} value={opt} className="bg-[var(--background)]">{opt}</option>
-                                ))}
-                            </select>
-                            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none" />
-                        </div>
+                        <CustomSelect
+                            key={idx}
+                            options={filter.options}
+                            value={filter.value}
+                            onChange={filter.setter}
+                            variant="pill"
+                        />
                     ))}
                 </div>
 
@@ -195,8 +190,7 @@ const StatusIndicator = ({ status, styling }: any) => (
 const TripModal = ({ onClose }: { onClose: () => void }) => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel w-full max-w-lg rounded-2xl p-6 relative z-10 overflow-hidden shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[#bfc0d1]" />
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel panel-shine w-full max-w-lg rounded-2xl p-6 relative z-10 overflow-hidden shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2"><MapPin className="text-[var(--primary)]" /> Create New Trip</h2>
                 <button onClick={onClose} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)]"><X size={20} /></button>
@@ -221,8 +215,7 @@ const TripModal = ({ onClose }: { onClose: () => void }) => (
 const VehicleModal = ({ onClose }: { onClose: () => void }) => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" />
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel w-full max-w-lg rounded-2xl p-6 relative z-10 overflow-hidden shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[#bfc0d1]" />
+        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel panel-shine w-full max-w-lg rounded-2xl p-6 relative z-10 overflow-hidden shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2"><Truck className="text-[var(--primary)]" /> Register Vehicle</h2>
                 <button onClick={onClose} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)]"><X size={20} /></button>
