@@ -216,22 +216,22 @@ const TripModal = ({ onClose }: { onClose: () => void }) => (
 
 const VehicleModal = ({ onClose }: { onClose: () => void }) => (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm shadow-2xl" />
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel w-full max-w-lg rounded-2xl p-6 relative z-10 overflow-hidden shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400" />
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-[#bfc0d1]" />
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold flex items-center gap-2"><Truck className="text-emerald-500" /> Register Vehicle</h2>
+                <h2 className="text-xl font-bold flex items-center gap-2"><Truck className="text-[var(--primary)]" /> Register Vehicle</h2>
                 <button onClick={onClose} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)]"><X size={20} /></button>
             </div>
             <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                    <select className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[var(--background)]">
+                    <select className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[var(--background)] border-[var(--card-border)] focus:ring-2 focus:ring-[var(--primary)]">
                         <option>Truck</option><option>Van</option><option>Bike</option>
                     </select>
-                    <input type="number" placeholder="Max capacity (kg)" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)]" />
+                    <input type="number" placeholder="Max capacity (kg)" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)] border-[var(--card-border)] focus:ring-2 focus:ring-[var(--primary)]" />
                 </div>
-                <input type="text" placeholder="License Plate / Unique ID" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)]" />
-                <button onClick={onClose} className="w-full py-3 rounded-xl bg-emerald-500 text-white font-semibold mt-6">Register Asset</button>
+                <input type="text" placeholder="License Plate / Unique ID" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)] border-[var(--card-border)] focus:ring-2 focus:ring-[var(--primary)]" />
+                <button onClick={onClose} className="w-full py-3 rounded-xl bg-[var(--primary)] text-white font-semibold mt-6 shadow-[0_4px_14px_0_rgba(96,81,155,0.39)] hover:shadow-[0_6px_20px_rgba(96,81,155,0.23)] transition-all">Register Asset</button>
             </div>
         </motion.div>
     </div>
