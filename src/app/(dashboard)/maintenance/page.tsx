@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { getVehicles } from "@/lib/actions/logistics";
 import MaintenanceClient from "./MaintenanceClient";
+import { requireRole } from "@/lib/rbac";
 
 export default async function MaintenancePage() {
+    await requireRole(["MANAGER", "FINANCIAL_ANALYST"]);
     const [rawLogs, vehicles] = await Promise.all([
         prisma.maintenanceLog.findMany({
             include: { vehicle: true },

@@ -7,12 +7,14 @@ import {
     MapPin,
     Search,
     Plus,
-    X
+    X,
+    ShieldOff
 } from "lucide-react";
 import CustomSelect from "@/components/ui/CustomSelect";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { getStatusStyling } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 export default function DashboardClient({ initialFleetData }: { initialFleetData: any[] }) {
     // Filtering and Search State
@@ -56,8 +58,25 @@ export default function DashboardClient({ initialFleetData }: { initialFleetData
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
 
+    const searchParams = useSearchParams();
+    const accessDenied = searchParams.get("denied") === "1";
+
     return (
         <div className="px-6 py-6 space-y-4">
+            {/* Access Denied Banner */}
+            <AnimatePresence>
+                {accessDenied && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -16 }}
+                        className="flex items-center gap-3 px-5 py-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm font-medium"
+                    >
+                        <ShieldOff size={18} className="shrink-0" />
+                        <span>Access Denied — You don't have permission to view that page. Showing your authorized view.</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             {/* Action Bar */}
             <div className="flex flex-col xl:flex-row gap-4 justify-between">
                 <div className="flex flex-wrap items-center gap-3 flex-1">

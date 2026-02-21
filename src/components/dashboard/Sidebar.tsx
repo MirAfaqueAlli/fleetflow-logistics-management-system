@@ -10,7 +10,8 @@ import {
     BarChart3,
     LayoutDashboard,
     X,
-    Home
+    Home,
+    ShieldAlert
 } from "lucide-react";
 
 interface SidebarProps {
@@ -20,6 +21,7 @@ interface SidebarProps {
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const SidebarItem = ({
     icon: Icon,
@@ -42,8 +44,32 @@ const SidebarItem = ({
     </Link>
 );
 
+// ─── RBAC Nav Config ───
+const ALL_NAV = [
+    { href: "/dashboard", icon: LayoutDashboard, text: "Dashboard", roles: ["MANAGER", "DISPATCHER", "SAFETY_OFFICER", "FINANCIAL_ANALYST"] },
+    { href: "/vehicles", icon: Truck, text: "Vehicle Registry", roles: ["MANAGER", "DISPATCHER", "SAFETY_OFFICER"] },
+    { href: "/trips", icon: MapPin, text: "Trip Dispatcher", roles: ["MANAGER", "DISPATCHER"] },
+    { href: "/maintenance", icon: Wrench, text: "Maintenance", roles: ["MANAGER", "FINANCIAL_ANALYST"] },
+    { href: "/expenses", icon: Receipt, text: "Trip & Expense", roles: ["MANAGER", "FINANCIAL_ANALYST"] },
+    { href: "/performance", icon: Activity, text: "Drivers & Performance", roles: ["MANAGER", "SAFETY_OFFICER"] },
+    { href: "/analytics", icon: BarChart3, text: "Analytics", roles: ["MANAGER", "FINANCIAL_ANALYST"] },
+];
+
+// Role display config
+const ROLE_META: Record<string, { label: string; color: string }> = {
+    MANAGER: { label: "Fleet Manager", color: "text-violet-400  bg-violet-500/10 border-violet-500/20" },
+    DISPATCHER: { label: "Dispatcher", color: "text-blue-400    bg-blue-500/10   border-blue-500/20" },
+    SAFETY_OFFICER: { label: "Safety Officer", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" },
+    FINANCIAL_ANALYST: { label: "Financial Analyst", color: "text-amber-400   bg-amber-500/10  border-amber-500/20" },
+};
+
 export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const pathname = usePathname();
+    const { data: session } = useSession();
+    const userRole = (session?.user as any)?.role as string || "NONE";
+
+    const visibleNav = ALL_NAV.filter(item => item.roles.includes(userRole));
+    const roleMeta = ROLE_META[userRole];
 
     const handleLinkClick = () => {
         if (window.innerWidth < 1024) {
@@ -72,6 +98,7 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 transition={{ type: "spring", bounce: 0, duration: 0.4 }}
                 className="w-72 glass-panel m-4 rounded-2xl flex flex-col z-50 fixed lg:relative h-[calc(100vh-2rem)] border-r border-[var(--card-border)]"
             >
+                {/* Logo */}
                 <div className="p-6 flex items-center justify-between border-b border-[var(--card-border)]">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#60519b] to-[#31323e] flex items-center justify-center shadow-lg shadow-[#60519b]/20">
@@ -84,15 +111,29 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     </button>
                 </div>
 
-                <div className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar mt-4">
+                {/* Role Badge */}
+                {roleMeta && (
+                    <div className="px-4 pt-4">
+                        <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold ${roleMeta.color}`}>
+                            <ShieldAlert size={14} />
+                            <span>{roleMeta.label}</span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Nav Items */}
+                <div className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar mt-2">
                     <SidebarItem href="/" icon={Home} text="Home" active={pathname === '/'} onClick={handleLinkClick} />
-                    <SidebarItem href="/dashboard" icon={LayoutDashboard} text="Dashboard" active={pathname === '/dashboard'} onClick={handleLinkClick} />
-                    <SidebarItem href="/vehicles" icon={Truck} text="Vehicle Registry" active={pathname === '/vehicles'} onClick={handleLinkClick} />
-                    <SidebarItem href="/trips" icon={MapPin} text="Trip Dispatcher" active={pathname === '/trips'} onClick={handleLinkClick} />
-                    <SidebarItem href="/maintenance" icon={Wrench} text="Maintenance" active={pathname === '/maintenance'} onClick={handleLinkClick} />
-                    <SidebarItem href="/expenses" icon={Receipt} text="Trip & Expense" active={pathname === '/expenses'} onClick={handleLinkClick} />
-                    <SidebarItem href="/performance" icon={Activity} text="Drivers & Performance" active={pathname === '/performance'} onClick={handleLinkClick} />
-                    <SidebarItem href="/analytics" icon={BarChart3} text="Analytics" active={pathname === '/analytics'} onClick={handleLinkClick} />
+                    {visibleNav.map(item => (
+                        <SidebarItem
+                            key={item.href}
+                            href={item.href}
+                            icon={item.icon}
+                            text={item.text}
+                            active={pathname === item.href}
+                            onClick={handleLinkClick}
+                        />
+                    ))}
                 </div>
             </motion.aside>
         </>

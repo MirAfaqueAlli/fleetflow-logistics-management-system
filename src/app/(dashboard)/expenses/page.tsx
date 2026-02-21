@@ -1,7 +1,9 @@
 import { getExpenses, getVehicles } from "@/lib/actions/logistics";
 import ExpensesClient from "./ExpensesClient";
+import { requireRole } from "@/lib/rbac";
 
 export default async function ExpensesPage() {
+    await requireRole(["MANAGER", "FINANCIAL_ANALYST"]);
     const [rawExpenses, vehicles] = await Promise.all([
         getExpenses(),
         getVehicles(),

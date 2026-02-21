@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import AnalyticsClient from "./AnalyticsClient";
+import { requireRole } from "@/lib/rbac";
 
 export default async function AnalyticsPage() {
+    await requireRole(["MANAGER", "FINANCIAL_ANALYST"]);
     // 1. Fetch raw data
     const [vehicles, trips, expenses] = await Promise.all([
         prisma.vehicle.findMany({

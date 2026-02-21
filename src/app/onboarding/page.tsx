@@ -5,6 +5,46 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { updateUserRole } from "@/lib/actions/auth";
 import { Role } from "@prisma/client";
+import { ShieldAlert, Truck, MapPin, Activity, BarChart3, Wrench, Receipt, LayoutDashboard } from "lucide-react";
+
+const ROLES = [
+    {
+        value: "MANAGER",
+        label: "Fleet Manager",
+        desc: "Full access — oversee all vehicles, trips, drivers, expenses & analytics.",
+        color: "border-violet-500 ring-violet-500 bg-violet-500/10",
+        badgeColor: "text-violet-400 bg-violet-500/10 border-violet-500/20",
+        icon: ShieldAlert,
+        pages: ["Dashboard", "Vehicle Registry", "Trip Dispatcher", "Maintenance", "Trip & Expense", "Drivers & Performance", "Analytics"],
+    },
+    {
+        value: "DISPATCHER",
+        label: "Dispatcher",
+        desc: "Create and manage trips, assign drivers, view vehicle availability.",
+        color: "border-blue-500 ring-blue-500 bg-blue-500/10",
+        badgeColor: "text-blue-400 bg-blue-500/10 border-blue-500/20",
+        icon: MapPin,
+        pages: ["Dashboard", "Vehicle Registry", "Trip Dispatcher"],
+    },
+    {
+        value: "SAFETY_OFFICER",
+        label: "Safety Officer",
+        desc: "Monitor driver compliance, license validity, and safety scores.",
+        color: "border-emerald-500 ring-emerald-500 bg-emerald-500/10",
+        badgeColor: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
+        icon: Activity,
+        pages: ["Dashboard", "Vehicle Registry", "Drivers & Performance"],
+    },
+    {
+        value: "FINANCIAL_ANALYST",
+        label: "Financial Analyst",
+        desc: "Audit fuel spend, maintenance costs, ROI, and operational analytics.",
+        color: "border-amber-500 ring-amber-500 bg-amber-500/10",
+        badgeColor: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+        icon: BarChart3,
+        pages: ["Dashboard", "Maintenance", "Trip & Expense", "Analytics"],
+    },
+];
 
 export default function OnboardingPage() {
     const { data: session, update } = useSession();
@@ -12,6 +52,8 @@ export default function OnboardingPage() {
     const [role, setRole] = useState("MANAGER");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
+
+    const selectedRole = ROLES.find(r => r.value === role)!;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,14 +65,13 @@ export default function OnboardingPage() {
         try {
             const result = await updateUserRole(session.user.id, role as Role);
             if (result.success) {
-                // Update the session client-side to reflect the new role
                 await update({ role });
                 router.push("/dashboard");
                 router.refresh();
             } else {
                 setError(result.error || "Failed to update role");
             }
-        } catch (err) {
+        } catch {
             setError("An unexpected error occurred.");
         } finally {
             setIsLoading(false);
@@ -38,56 +79,87 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#1e202c] text-[#bfc0d1]">
-            <div className="w-full max-w-md p-8 rounded-2xl glass-panel bg-[#31323e] shadow-2xl relative overflow-hidden ring-1 ring-[#bfc0d1]/10">
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#60519b] rounded-full blur-[80px] opacity-70"></div>
-                <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-[#60519b] rounded-full blur-[80px] opacity-70"></div>
+        <div className="min-h-screen flex items-center justify-center bg-[#1e202c] text-[#bfc0d1] p-4">
+            <div className="w-full max-w-2xl">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#60519b]/20 border border-[#60519b]/30 text-[#a78bfa] text-sm font-medium mb-4">
+                        <ShieldAlert size={14} />
+                        Role-Based Access Control
+                    </div>
+                    <h1 className="text-3xl font-bold text-white mb-2">Choose Your Role</h1>
+                    <p className="text-[#8b8c9d] text-sm">Your role determines which pages and features you can access in FleetFlow.</p>
+                </div>
 
-                <div className="relative z-10 text-center">
-                    <h1 className="text-3xl font-bold tracking-wider text-white mb-2">Final Step</h1>
-                    <p className="text-sm text-[#8b8c9d] mb-8">Choose your role in FleetFlow</p>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Role Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {ROLES.map((item) => {
+                            const isActive = role === item.value;
+                            return (
+                                <button
+                                    key={item.value}
+                                    type="button"
+                                    onClick={() => setRole(item.value)}
+                                    className={`p-4 rounded-2xl border-2 transition-all text-left group relative overflow-hidden ${isActive
+                                            ? `${item.color} ring-1`
+                                            : "bg-[#252736] border-[#bfc0d1]/10 hover:border-[#60519b]/40"
+                                        }`}
+                                >
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className={`p-2 rounded-xl border ${isActive ? item.badgeColor : "bg-white/5 border-white/10 text-[#8b8c9d]"}`}>
+                                            <item.icon size={18} />
+                                        </div>
+                                        {isActive && (
+                                            <span className={`text-[10px] font-bold px-2 py-1 rounded-full border ${item.badgeColor}`}>
+                                                SELECTED
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="font-bold text-white mb-1 group-hover:text-[#c4b5fd] transition-colors">
+                                        {item.label}
+                                    </div>
+                                    <div className="text-xs text-[#8b8c9d] leading-relaxed mb-3">{item.desc}</div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {item.pages.map(p => (
+                                            <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[#bfc0d1]">
+                                                {p}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* Access Preview */}
+                    <div className="p-4 rounded-xl bg-[#252736] border border-[#bfc0d1]/10">
+                        <p className="text-xs font-semibold text-[#8b8c9d] uppercase tracking-wider mb-2">
+                            As <span className="text-white">{selectedRole.label}</span>, you will access:
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {selectedRole.pages.map(p => (
+                                <span key={p} className={`text-xs px-3 py-1 rounded-full border font-medium ${selectedRole.badgeColor}`}>
+                                    {p}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
 
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-xl mb-6 text-sm">
+                        <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-xl text-sm">
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="text-left space-y-2">
-                            <label className="text-sm font-medium text-[#bfc0d1] ml-1">Select Your Expertise</label>
-                            <div className="grid grid-cols-1 gap-3">
-                                {[
-                                    { value: "MANAGER", label: "Fleet Manager", desc: "Oversee vehicle health and assets" },
-                                    { value: "DISPATCHER", label: "Dispatcher", desc: "Create trips and assign drivers" },
-                                    { value: "SAFETY_OFFICER", label: "Safety Officer", desc: "Monitor compliance and scores" },
-                                    { value: "FINANCIAL_ANALYST", label: "Financial Analyst", desc: "Audit fuel and maintenance costs" },
-                                ].map((item) => (
-                                    <button
-                                        key={item.value}
-                                        type="button"
-                                        onClick={() => setRole(item.value)}
-                                        className={`p-4 rounded-xl border transition-all text-left group ${role === item.value
-                                            ? "bg-[#60519b]/20 border-[#60519b] ring-1 ring-[#60519b]"
-                                            : "bg-[#1e202c] border-[#bfc0d1]/10 hover:border-[#60519b]/50"
-                                            }`}
-                                    >
-                                        <div className="font-bold text-white group-hover:text-[#7b6ac6] transition-colors">{item.label}</div>
-                                        <div className="text-xs text-[#8b8c9d] mt-1">{item.desc}</div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-[#60519b] hover:bg-[#7b6ac6] active:scale-[0.98] transition-all duration-300 text-white font-medium rounded-xl px-4 py-4 shadow-lg disabled:opacity-50"
-                        >
-                            {isLoading ? "Finalizing..." : "Complete Setup"}
-                        </button>
-                    </form>
-                </div>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-[#60519b] hover:bg-[#7b6ac6] active:scale-[0.98] transition-all duration-300 text-white font-semibold rounded-xl px-4 py-4 shadow-lg shadow-[#60519b]/20 disabled:opacity-50"
+                    >
+                        {isLoading ? "Setting up your workspace..." : `Enter as ${selectedRole.label} →`}
+                    </button>
+                </form>
             </div>
         </div>
     );
