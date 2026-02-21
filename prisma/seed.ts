@@ -22,14 +22,16 @@ async function main() {
   ]
 
   const createdVehicles = []
-  for (const v of vehicles as any[]) {
+  for (const v of vehicles) {
     createdVehicles.push(await prisma.vehicle.create({ data: v }))
   }
 
   console.log('Seeding Drivers...')
   const today = new Date()
-  const nextYear = new Date(today.setFullYear(today.getFullYear() + 1))
-  const pastYear = new Date(today.setFullYear(today.getFullYear() - 2)) // expired
+  const nextYear = new Date(today)
+  nextYear.setFullYear(today.getFullYear() + 1)
+  const pastYear = new Date(today)
+  pastYear.setFullYear(today.getFullYear() - 2) // expired
 
   const drivers = [
     { name: 'Rajesh Kumar', licenseNumber: 'DL-11111', licenseExpiry: nextYear, category: 'Trailer Truck', status: DriverStatus.OFF_DUTY },
@@ -41,9 +43,10 @@ async function main() {
   ]
 
   const createdDrivers = []
-  for (const d of drivers as any[]) {
+  for (const d of drivers) {
     createdDrivers.push(await prisma.driver.create({ data: d }))
   }
+
 
   console.log('Seeding Trips...')
   const trips = [
@@ -66,7 +69,7 @@ async function main() {
     }
   ]
 
-  for (const t of trips as any[]) {
+  for (const t of trips) {
     await prisma.trip.create({ data: t })
   }
 

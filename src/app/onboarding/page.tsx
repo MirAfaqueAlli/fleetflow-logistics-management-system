@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { updateUserRole } from "@/lib/actions/auth";
-import { Role } from "@/lib/types/enums";
+import { Role } from "@prisma/client";
 
 export default function OnboardingPage() {
     const { data: session, update } = useSession();
