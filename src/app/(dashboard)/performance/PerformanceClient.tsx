@@ -36,32 +36,27 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const [formData, setFormData] = useState({
-        name: "",
-        licenseNumber: "",
-        licenseExpiry: "",
-        category: "",
-    });
-
     const filteredDrivers = drivers.filter(d =>
         d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         d.licenseNumber.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        const data = {
+            name: fd.get("name") as string,
+            licenseNumber: fd.get("licenseNumber") as string,
+            licenseExpiry: fd.get("licenseExpiry") as string,
+            category: fd.get("category") as string,
+        };
+
         startTransition(async () => {
             try {
-                const newDriver = await createDriver({
-                    name: formData.name,
-                    licenseNumber: formData.licenseNumber,
-                    licenseExpiry: formData.licenseExpiry,
-                    category: formData.category,
-                });
-                setDrivers([{ ...newDriver, completionRate: 100 }, ...drivers]);
-                setFormData({ name: "", licenseNumber: "", licenseExpiry: "", category: "" });
+                await createDriver(data);
                 setIsModalOpen(false);
                 toast.success("Driver added successfully");
+                window.location.reload();
             } catch (error: any) {
                 toast.error(error.message || "Failed to add driver");
             }
@@ -138,7 +133,7 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                     )}
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/20"
+                        className="bg-[var(--primary)] hover:bg-[#7262b5] text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg shadow-[#60519b]/20"
                     >
                         <Plus size={18} />
                         <span>Add Driver</span>
@@ -277,10 +272,9 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                     <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Full Name</label>
                                     <input
                                         required
+                                        name="name"
                                         type="text"
                                         placeholder="e.g. John Doe"
-                                        value={formData.name}
-                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
                                         className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors"
                                     />
                                 </div>
@@ -290,10 +284,9 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">License #</label>
                                         <input
                                             required
+                                            name="licenseNumber"
                                             type="text"
                                             placeholder="e.g. DL-12345"
-                                            value={formData.licenseNumber}
-                                            onChange={e => setFormData({ ...formData, licenseNumber: e.target.value.toUpperCase() })}
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors font-mono uppercase"
                                         />
                                     </div>
@@ -301,9 +294,8 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Expiry Date</label>
                                         <input
                                             required
+                                            name="licenseExpiry"
                                             type="date"
-                                            value={formData.licenseExpiry}
-                                            onChange={e => setFormData({ ...formData, licenseExpiry: e.target.value })}
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors block"
                                         />
                                     </div>
@@ -313,8 +305,8 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                     <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Vehicle Category</label>
                                     <select
                                         required
-                                        value={formData.category}
-                                        onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                        name="category"
+                                        defaultValue=""
                                         className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors appearance-none"
                                     >
                                         <option value="" disabled>Select category...</option>
@@ -336,7 +328,7 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                     <button
                                         type="submit"
                                         disabled={isPending}
-                                        className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-colors font-medium border border-emerald-500 shadow-lg shadow-emerald-900/20 disabled:opacity-50 flex items-center justify-center min-w-[120px]"
+                                        className="px-6 py-2.5 rounded-xl bg-[var(--primary)] hover:bg-[#7262b5] text-white transition-colors font-medium border border-[var(--primary)] shadow-lg shadow-[#60519b]/20 disabled:opacity-50 flex items-center justify-center min-w-[120px]"
                                     >
                                         {isPending ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Save Driver"}
                                     </button>

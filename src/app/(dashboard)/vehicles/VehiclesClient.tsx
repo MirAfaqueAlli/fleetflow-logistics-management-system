@@ -23,35 +23,29 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isPending, startTransition] = useTransition();
 
-    const [formData, setFormData] = useState({
-        name: "",
-        model: "",
-        licensePlate: "",
-        maxLoadCapacity: "",
-        odometer: "",
-    });
-
     const filteredVehicles = vehicles.filter(v =>
         v.licensePlate.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         v.model.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        const data = {
+            name: fd.get("name") as string,
+            model: fd.get("model") as string,
+            licensePlate: fd.get("licensePlate") as string,
+            maxLoadCapacity: Number(fd.get("maxLoadCapacity")),
+            odometer: Number(fd.get("odometer")),
+        };
+
         startTransition(async () => {
             try {
-                const newVehicle = await createVehicle({
-                    name: formData.name,
-                    model: formData.model,
-                    licensePlate: formData.licensePlate,
-                    maxLoadCapacity: Number(formData.maxLoadCapacity),
-                    odometer: Number(formData.odometer),
-                });
-                setVehicles([newVehicle, ...vehicles]);
-                setFormData({ name: "", model: "", licensePlate: "", maxLoadCapacity: "", odometer: "" });
+                await createVehicle(data);
                 setIsModalOpen(false);
                 toast.success("Vehicle registered successfully");
+                window.location.reload();
             } catch (error: any) {
                 toast.error(error.message || "Failed to register vehicle");
             }
@@ -124,7 +118,7 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                     )}
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/20"
+                        className="bg-[var(--primary)] hover:bg-[#7262b5] text-white px-5 py-2.5 rounded-xl font-medium flex items-center gap-2 transition-all shadow-lg shadow-[#60519b]/20"
                     >
                         <Plus size={18} />
                         <span>New Vehicle</span>
@@ -253,10 +247,9 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">License Plate</label>
                                         <input
                                             required
+                                            name="licensePlate"
                                             type="text"
                                             placeholder="e.g. TH-001"
-                                            value={formData.licensePlate}
-                                            onChange={e => setFormData({ ...formData, licensePlate: e.target.value.toUpperCase() })}
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors font-mono uppercase"
                                         />
                                     </div>
@@ -264,10 +257,9 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Name / Make</label>
                                         <input
                                             required
+                                            name="name"
                                             type="text"
                                             placeholder="e.g. Titan Hauler"
-                                            value={formData.name}
-                                            onChange={e => setFormData({ ...formData, name: e.target.value })}
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors"
                                         />
                                     </div>
@@ -278,8 +270,8 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Vehicle Type</label>
                                         <select
                                             required
-                                            value={formData.model}
-                                            onChange={e => setFormData({ ...formData, model: e.target.value })}
+                                            name="model"
+                                            defaultValue=""
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors appearance-none"
                                         >
                                             <option value="" disabled>Select type...</option>
@@ -293,11 +285,10 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Max Payload (kg)</label>
                                         <input
                                             required
+                                            name="maxLoadCapacity"
                                             type="number"
                                             min="0"
                                             placeholder="e.g. 15000"
-                                            value={formData.maxLoadCapacity}
-                                            onChange={e => setFormData({ ...formData, maxLoadCapacity: e.target.value })}
                                             className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors"
                                         />
                                     </div>
@@ -307,11 +298,10 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                     <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Initial Odometer (km)</label>
                                     <input
                                         required
+                                        name="odometer"
                                         type="number"
                                         min="0"
                                         placeholder="Current mileage"
-                                        value={formData.odometer}
-                                        onChange={e => setFormData({ ...formData, odometer: e.target.value })}
                                         className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors"
                                     />
                                 </div>
@@ -327,7 +317,7 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                     <button
                                         type="submit"
                                         disabled={isPending}
-                                        className="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-colors font-medium border border-emerald-500 shadow-lg shadow-emerald-900/20 disabled:opacity-50 flex items-center justify-center min-w-[120px]"
+                                        className="px-6 py-2.5 rounded-xl bg-[var(--primary)] hover:bg-[#7262b5] text-white transition-colors font-medium border border-[var(--primary)] shadow-lg shadow-[#60519b]/20 disabled:opacity-50 flex items-center justify-center min-w-[120px]"
                                     >
                                         {isPending ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Save Vehicle"}
                                     </button>
