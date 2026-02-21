@@ -17,6 +17,29 @@ export default function ProfilePage() {
         systemAnnouncements: false,
     });
 
+    const [name, setName] = useState(user?.name || "");
+    const [bio, setBio] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        setIsSaving(false);
+        toast.success("Profile updated successfully");
+    };
+
+    const handleDiscard = () => {
+        setName(user?.name || "");
+        setBio("");
+        setNotifications({
+            tripUpdates: true,
+            maintenanceAlerts: true,
+            systemAnnouncements: false,
+        });
+        toast.info("Changes discarded");
+    };
+
     const handleToggle = (key: keyof typeof notifications, label: string) => {
         const newValue = !notifications[key];
         setNotifications((prev) => ({ ...prev, [key]: newValue }));
@@ -84,7 +107,8 @@ export default function ProfilePage() {
                                     <label className="text-sm font-medium text-[var(--muted-foreground)]">Full Name</label>
                                     <input
                                         type="text"
-                                        defaultValue={user?.name || ""}
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
                                         className="w-full bg-black/20 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--primary)] transition-colors"
                                     />
                                 </div>
@@ -101,6 +125,8 @@ export default function ProfilePage() {
                             <div className="space-y-1.5">
                                 <label className="text-sm font-medium text-[var(--muted-foreground)]">Biography</label>
                                 <textarea
+                                    value={bio}
+                                    onChange={(e) => setBio(e.target.value)}
                                     className="w-full bg-black/20 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[var(--primary)] transition-colors min-h-[100px]"
                                     placeholder="Tell us about your role at FleetFlow..."
                                 ></textarea>
@@ -143,12 +169,25 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4">
-                        <button className="px-6 py-2.5 rounded-xl border border-[var(--card-border)] text-[var(--muted-foreground)] hover:bg-white/5 transition-all">
+                        <button
+                            onClick={handleDiscard}
+                            className="px-6 py-2.5 rounded-xl border border-[var(--card-border)] text-[var(--muted-foreground)] hover:bg-white/5 transition-all"
+                        >
                             Discard Changes
                         </button>
-                        <button className="px-8 py-2.5 rounded-xl bg-[var(--primary)] text-white font-medium hover:bg-[#7262b5] transition-all shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2">
-                            <Save size={18} />
-                            Save Profile
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="px-8 py-2.5 rounded-xl bg-[var(--primary)] text-white font-medium hover:bg-[#7262b5] transition-all shadow-lg shadow-[var(--primary)]/20 flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {isSaving ? (
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            ) : (
+                                <>
+                                    <Save size={18} />
+                                    Save Profile
+                                </>
+                            )}
                         </button>
                     </div>
                 </div>
