@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { getStatusStyling } from "@/lib/mock-data";
+import { toast } from "sonner";
 
 export default function DashboardClient({ initialFleetData }: { initialFleetData: any[] }) {
     // Filtering and Search State
@@ -208,7 +209,10 @@ const TripModal = ({ onClose }: { onClose: () => void }) => (
                         <option>Truck</option><option>Van</option><option>Bike</option>
                     </select>
                 </div>
-                <button onClick={onClose} className="w-full py-3 rounded-xl bg-[var(--primary)] text-white font-semibold mt-6">Dispatch Trip</button>
+                <button onClick={() => {
+                    toast.success("Trip successfully dispatched!");
+                    onClose();
+                }} className="w-full py-3 rounded-xl bg-[var(--primary)] text-white font-semibold mt-6 shadow-[0_4px_14px_0_rgba(96,81,155,0.39)] hover:shadow-[0_6px_20px_rgba(96,81,155,0.23)] transition-all">Dispatch Trip</button>
             </div>
         </motion.div>
     </div>
@@ -231,7 +235,10 @@ const VehicleModal = ({ onClose }: { onClose: () => void }) => (
                     <input type="number" placeholder="Max capacity (kg)" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)] border-[var(--card-border)] focus:ring-2 focus:ring-[var(--primary)]" />
                 </div>
                 <input type="text" placeholder="License Plate / Unique ID" className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none bg-[rgba(255,255,255,0.02)] border-[var(--card-border)] focus:ring-2 focus:ring-[var(--primary)]" />
-                <button onClick={onClose} className="w-full py-3 rounded-xl bg-[var(--primary)] text-white font-semibold mt-6 shadow-[0_4px_14px_0_rgba(96,81,155,0.39)] hover:shadow-[0_6px_20px_rgba(96,81,155,0.23)] transition-all">Register Asset</button>
+                <button onClick={() => {
+                    toast.success("Vehicle registered successfully!");
+                    onClose();
+                }} className="w-full py-3 rounded-xl bg-[var(--primary)] text-white font-semibold mt-6 shadow-[0_4px_14px_0_rgba(96,81,155,0.39)] hover:shadow-[0_6px_20px_rgba(96,81,155,0.23)] transition-all">Register Asset</button>
             </div>
         </motion.div>
     </div>
