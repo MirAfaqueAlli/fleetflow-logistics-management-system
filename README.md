@@ -285,6 +285,34 @@ Navigate to `/vehicles` or `/performance` in the app and click **"Add Mock Data"
 
 ---
 
+## 🏆 Hackathon
+
+This project was built for the **Odoo x Gujarat Vidyapith Hackathon '26** — an 8-hour virtual coding challenge held on **21 February 2026**.
+
+| | |
+|---|---|
+| **Event** | Odoo x Gujarat Vidyapith Hackathon '26 |
+| **Problem Statement** | FleetFlow |
+| **Round** | Virtual Round (9 AM – 5 PM, 21 Feb 2026) |
+| **Venue** | Gujarat Vidyapith, Ashram Road, Ahmedabad, Gujarat |
+| **Mentor** | Bharat Singh Rathore — [bsra-odoo](https://github.com/bsra-odoo) |
+
+### 👥 Team
+
+| Name | Role |
+|------|------|
+| **Mir Afaque Alli** | Team Leader |
+| **Puspalata Panigrahi** | Team Member |
+| **Om Prakash Nayak** | Team Member |
+
+### 🏅 Prizes
+- 🥇 Winner: ₹45,000 + Odoo Goodies + Certificate
+- 🥈 First Runner-up: ₹35,000 + Odoo Goodies + Certificate
+- 🥉 Second Runner-up: ₹25,000 + Odoo Goodies + Certificate
+- 🎖️ Exceptional performers may be offered CTC up to **8 LPA**
+
+---
+
 ## 📜 License
 
-This project is built for academic/portfolio demonstration of a rule-based fleet logistics management system. All rights reserved © 2026 FleetFlow.
+Built as a hackathon submission for the Odoo x Gujarat Vidyapith Hackathon '26. All rights reserved © 2026 FleetFlow Team.
