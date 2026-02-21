@@ -22,7 +22,22 @@ export default async function Home() {
                 {session ? (
                     <div className="space-y-4">
                         <p className="font-medium text-white">Signed in as {session.user?.email}</p>
-                        <div className="flex gap-4 justify-center">
+                        <p className="text-sm">
+                            Role: <span className="text-[#60519b] font-bold">{(session.user as any).role || "Not Assigned"}</span>
+                        </p>
+
+                        {(session.user as any).role === "NONE" && (
+                            <div className="py-4">
+                                <Link
+                                    href="/onboarding"
+                                    className="px-8 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-500 transition-all shadow-lg font-bold"
+                                >
+                                    Complete Onboarding
+                                </Link>
+                            </div>
+                        )}
+
+                        <div className="flex gap-4 justify-center pt-2">
                             <Link
                                 href="/api/auth/signout"
                                 className="px-8 py-3 bg-[#31323e] border border-[#bfc0d1]/20 rounded-xl hover:bg-[#3d3e4e] transition-all font-semibold"

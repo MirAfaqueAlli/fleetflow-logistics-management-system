@@ -26,9 +26,11 @@ export const authConfig = {
         return false; // redirects back to signIn page
       }
 
-      // If logged in but no role, force onboarding (unless already there)
+      // If logged in but no role assigned yet, force onboarding (unless already there)
       const userRole = (auth?.user as any)?.role;
-      if (userRole === "NONE" && nextUrl.pathname !== "/onboarding") {
+      const isMissingRole = !userRole || userRole === "NONE";
+      
+      if (isMissingRole && nextUrl.pathname !== "/onboarding") {
         return Response.redirect(new URL("/onboarding", nextUrl));
       }
 
