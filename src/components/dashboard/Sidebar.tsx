@@ -9,7 +9,8 @@ import {
     Activity,
     BarChart3,
     LayoutDashboard,
-    X
+    X,
+    Home
 } from "lucide-react";
 
 interface SidebarProps {
@@ -84,6 +85,7 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </div>
 
                 <div className="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar mt-4">
+                    <SidebarItem href="/" icon={Home} text="Home" active={pathname === '/'} onClick={handleLinkClick} />
                     <SidebarItem href="/dashboard" icon={LayoutDashboard} text="Dashboard" active={pathname === '/dashboard'} onClick={handleLinkClick} />
                     <SidebarItem href="/vehicles" icon={Truck} text="Vehicle Registry" active={pathname === '/vehicles'} onClick={handleLinkClick} />
                     <SidebarItem href="/trips" icon={MapPin} text="Trip Dispatcher" active={pathname === '/trips'} onClick={handleLinkClick} />

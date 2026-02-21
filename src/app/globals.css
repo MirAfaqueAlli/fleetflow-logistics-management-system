@@ -133,3 +133,118 @@ body {
     transform: translate(10%, -5%) scale(1.05);
   }
 }
+
+/* Landing page particles */
+.landing-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(96, 81, 155, 0.8) 0%, rgba(96, 81, 155, 0) 70%);
+  pointer-events: none;
+}
+
+/* Smooth scroll for the entire page */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Panel Shine Effect ─── */
+.panel-shine {
+  position: relative;
+}
+
+.panel-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(167, 139, 250, 0.08) 15%,
+      rgba(167, 139, 250, 0.25) 50%,
+      rgba(167, 139, 250, 0.08) 85%,
+      transparent 100%);
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.panel-shine::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -50%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(196, 181, 253, 0.6),
+      transparent);
+  animation: shine-sweep 4s ease-in-out infinite;
+  z-index: 2;
+  border-radius: 999px;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -50%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* ─── Premium Select / Dropdown Styling ─── */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a78bfa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 2.5rem !important;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+select:focus {
+  box-shadow: 0 0 0 2px var(--primary), 0 4px 16px rgba(96, 81, 155, 0.15);
+}
+
+select:hover {
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+select option {
+  background: var(--background, #1e202c);
+  color: var(--foreground, #ffffff);
+  padding: 10px 14px;
+  border: none;
+  font-size: 0.875rem;
+}
+
+select option:checked {
+  background: var(--primary);
+  color: white;
+}
+
+/* Date input styling */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+.light input[type="date"] {
+  color-scheme: light;
+}

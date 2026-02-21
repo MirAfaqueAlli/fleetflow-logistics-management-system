@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
-import { Search, ListFilter, SortAsc, LayoutGrid, CheckCircle2, AlertCircle } from "lucide-react";
+import { Search, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { createTrip } from "@/lib/actions/logistics";
 
@@ -93,20 +93,8 @@ export default function TripsClient({ initialTrips, availableVehicles, available
                                 className="w-full pl-10 pr-4 py-2 rounded-xl glass-panel border border-[var(--card-border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] bg-[rgba(255,255,255,0.02)]"
                             />
                         </div>
-                        <div className="flex flex-wrap items-center gap-3">
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass-panel text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] transition-colors border border-[var(--card-border)]">
-                                <LayoutGrid size={16} /> Group by
-                            </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass-panel text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] transition-colors border border-[var(--card-border)]">
-                                <ListFilter size={16} /> Filter
-                            </button>
-                            <button className="flex items-center gap-2 px-4 py-2 rounded-xl glass-panel text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] transition-colors border border-[var(--card-border)]">
-                                <SortAsc size={16} /> Sort by...
-                            </button>
-                        </div>
                     </div>
 
-                    {/* Table representation */}
                     <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]">
                         <table className="w-full text-left border-collapse min-w-[600px]">
                             <thead>
@@ -149,9 +137,8 @@ export default function TripsClient({ initialTrips, availableVehicles, available
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="glass-panel rounded-3xl p-6 lg:p-8 shadow-xl border border-[var(--card-border)] bg-[var(--card)]/50 relative overflow-hidden h-fit"
+                    className="glass-panel panel-shine rounded-3xl p-6 lg:p-8 shadow-xl border border-[var(--card-border)] bg-[var(--card)]/50 relative overflow-hidden h-fit"
                 >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-emerald-500" />
 
                     <h2 className="text-xl font-bold mb-6 mt-1 flex items-center gap-2 text-white">
                         <span className="px-3 py-1 bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20 rounded-lg text-sm uppercase tracking-wider">New Trip Form</span>

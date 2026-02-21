@@ -2,7 +2,8 @@
 
 import { useState, useMemo, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, ChevronDown, X, Receipt } from "lucide-react";
+import { Search, Plus, X, Receipt } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { getStatusStyling } from "@/lib/mock-data";
 import { logExpense } from "@/lib/actions/logistics";
 import { toast } from "sonner";
@@ -92,18 +93,12 @@ export default function ExpensesClient({
                             className="w-full pl-10 pr-4 py-2.5 rounded-full glass-panel border border-[var(--card-border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm transition-all text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:bg-[var(--card)]/80"
                         />
                     </div>
-                    <div className="relative">
-                        <select
-                            className="glass-panel px-4 py-2.5 rounded-full text-sm font-medium appearance-none pr-10 cursor-pointer hover:bg-[rgba(255,255,255,0.05)] transition-colors text-[var(--foreground)] outline-none"
-                            value={filterType}
-                            onChange={(e) => setFilterType(e.target.value)}
-                        >
-                            {["All Types", "FUEL", "MAINTENANCE"].map(opt => (
-                                <option key={opt} value={opt} className="bg-[var(--background)]">{opt}</option>
-                            ))}
-                        </select>
-                        <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted-foreground)] pointer-events-none" />
-                    </div>
+                    <CustomSelect
+                        options={["All Types", "FUEL", "MAINTENANCE"]}
+                        value={filterType}
+                        onChange={setFilterType}
+                        variant="pill"
+                    />
                 </div>
 
                 <div className="flex items-center gap-3 self-end xl:self-auto">
@@ -159,8 +154,8 @@ export default function ExpensesClient({
                                         </td>
                                         <td className="py-4 px-6 text-sm">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${row.type === "FUEL"
-                                                    ? "bg-amber-500/10 text-amber-400"
-                                                    : "bg-rose-500/10 text-rose-400"
+                                                ? "bg-amber-500/10 text-amber-400"
+                                                : "bg-rose-500/10 text-rose-400"
                                                 }`}>
                                                 {row.type}
                                             </span>
@@ -260,8 +255,7 @@ const NewExpenseModal = ({
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel w-full max-w-sm rounded-2xl p-6 relative z-10 shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary)] to-emerald-400" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="glass-panel panel-shine w-full max-w-sm rounded-2xl p-6 relative z-10 shadow-2xl border border-[var(--card-border)] bg-[var(--background)]/90 overflow-hidden">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold flex items-center gap-2"><Receipt className="text-[var(--primary)]" size={20} /> New Expense</h2>
                     <button onClick={onClose} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)]"><X size={20} /></button>
