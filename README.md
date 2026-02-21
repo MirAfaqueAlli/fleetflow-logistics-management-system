@@ -315,4 +315,4 @@ This project was built for the **Odoo x Gujarat Vidyapith Hackathon '26** — an
 
 ## 📜 License
 
-Built as a hackathon submission for the Odoo x Gujarat Vidyapith Hackathon '26. All rights reserved © 2026 FleetFlow Team.
+Built as a hackathon submission for the Odoo x Gujarat Vidyapith Hackathon '26.
