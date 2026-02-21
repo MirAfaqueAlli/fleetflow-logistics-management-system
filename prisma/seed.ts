@@ -1,8 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const VehicleStatus = { AVAILABLE: 'AVAILABLE', ON_TRIP: 'ON_TRIP', IN_SHOP: 'IN_SHOP', RETIRED: 'RETIRED' }
-const DriverStatus = { ON_DUTY: 'ON_DUTY', OFF_DUTY: 'OFF_DUTY', SUSPENDED: 'SUSPENDED' }
-const TripStatus = { DRAFT: 'DRAFT', DISPATCHED: 'DISPATCHED', COMPLETED: 'COMPLETED', CANCELLED: 'CANCELLED' }
+import { PrismaClient, VehicleStatus, DriverStatus, TripStatus } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -26,7 +22,7 @@ async function main() {
   ]
 
   const createdVehicles = []
-  for (const v of vehicles) {
+  for (const v of vehicles as any[]) {
     createdVehicles.push(await prisma.vehicle.create({ data: v }))
   }
 
@@ -34,7 +30,7 @@ async function main() {
   const today = new Date()
   const nextYear = new Date(today.setFullYear(today.getFullYear() + 1))
   const pastYear = new Date(today.setFullYear(today.getFullYear() - 2)) // expired
-  
+
   const drivers = [
     { name: 'Rajesh Kumar', licenseNumber: 'DL-11111', licenseExpiry: nextYear, category: 'Trailer Truck', status: DriverStatus.OFF_DUTY },
     { name: 'Amit Singh', licenseNumber: 'DL-22222', licenseExpiry: nextYear, category: 'Van', status: DriverStatus.OFF_DUTY },
@@ -45,24 +41,24 @@ async function main() {
   ]
 
   const createdDrivers = []
-  for (const d of drivers) {
+  for (const d of drivers as any[]) {
     createdDrivers.push(await prisma.driver.create({ data: d }))
   }
 
   console.log('Seeding Trips...')
   const trips = [
-    { 
-      origin: 'Mumbai', 
-      destination: 'Pune', 
-      cargoWeight: 15000, 
+    {
+      origin: 'Mumbai',
+      destination: 'Pune',
+      cargoWeight: 15000,
       status: TripStatus.DISPATCHED,
       vehicleId: createdVehicles[3].id, // Trailer Truck-02 (ON_TRIP)
       driverId: createdDrivers[2].id, // Suresh Patel (ON_DUTY)
     },
-    { 
-      origin: 'Delhi', 
-      destination: 'Noida', 
-      cargoWeight: 800, 
+    {
+      origin: 'Delhi',
+      destination: 'Noida',
+      cargoWeight: 800,
       status: TripStatus.COMPLETED,
       vehicleId: createdVehicles[1].id, // Van-05
       driverId: createdDrivers[1].id, // Amit Singh
@@ -70,7 +66,7 @@ async function main() {
     }
   ]
 
-  for (const t of trips) {
+  for (const t of trips as any[]) {
     await prisma.trip.create({ data: t })
   }
 
