@@ -54,8 +54,27 @@ export default function AnalyticsClient({
         return `Rs. ${val.toLocaleString("en-IN")}`;
     };
 
+    const downloadCSV = () => {
+        // Headers
+        let csvContent = "Month,Revenue (Rs),Fuel Cost (Rs),Maintenance (Rs),Net Profit (Rs),Avg km/L\n";
+
+        // Rows
+        monthlyFinancials.forEach(row => {
+            csvContent += `${row.month},${row.revenue},${row.fuelCost},${row.maintenance},${row.netProfit},${row.avgKmL}\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `fleetflow_financials_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
-        <div className="px-6 py-8 space-y-6 max-w-[1600px] mx-auto text-[var(--foreground)] pb-24">
+        <div className="px-6 py-8 space-y-6 w-full text-[var(--foreground)] pb-24">
 
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
@@ -67,10 +86,16 @@ export default function AnalyticsClient({
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-[var(--card-border)] glass-panel hover:bg-[rgba(255,255,255,0.05)] transition-colors text-sm font-medium">
+                    <button
+                        onClick={() => window.print()}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-[var(--card-border)] glass-panel hover:bg-[rgba(255,255,255,0.05)] transition-colors text-sm font-medium"
+                    >
                         <Download size={16} /> Export PDF
                     </button>
-                    <button className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--primary)] text-white hover:bg-[#4d417c] transition-all shadow-[0_0_15px_rgba(96,81,155,0.4)] text-sm font-medium">
+                    <button
+                        onClick={downloadCSV}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--primary)] text-white hover:bg-[#4d417c] transition-all shadow-[0_0_15px_rgba(96,81,155,0.4)] text-sm font-medium"
+                    >
                         <Download size={16} /> Export CSV
                     </button>
                 </div>
@@ -119,7 +144,7 @@ export default function AnalyticsClient({
             </div>
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+            <div className="flex flex-col gap-6 w-full">
                 {/* Fuel Efficiency Trend */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.98 }}
@@ -130,7 +155,7 @@ export default function AnalyticsClient({
                     <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
                         Fuel Efficiency Trend (km/L)
                     </h2>
-                    <div className="h-[280px] w-full text-sm">
+                    <div className="h-[400px] min-h-[400px] w-full text-sm">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={monthlyFinancials}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -163,7 +188,7 @@ export default function AnalyticsClient({
                     <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
                         Top 5 Costliest Vehicles
                     </h2>
-                    <div className="h-[280px] w-full text-sm">
+                    <div className="h-[400px] min-h-[400px] w-full text-sm">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={costliestVehicles}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -172,7 +197,7 @@ export default function AnalyticsClient({
                                 <Tooltip
                                     cursor={{ fill: 'rgba(255,255,255,0.02)' }}
                                     contentStyle={{ backgroundColor: 'var(--card)', borderColor: 'var(--card-border)', borderRadius: '12px', color: '#fff' }}
-                                    formatter={(value: number) => [formatRupees(value), "Total Cost"]}
+                                    formatter={(value: any) => [formatRupees(value as number), "Total Cost"]}
                                 />
                                 <Bar
                                     dataKey="totalCost"

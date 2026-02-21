@@ -57,16 +57,20 @@ export default function DashboardLayout({
                 <div className="blob bg-[var(--blob-3)] w-[500px] h-[500px] top-[30%] left-[40%]" />
             </div>
 
-            <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            <aside className="print:hidden h-screen z-50">
+                <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+            </aside>
 
             <main className="flex-1 flex flex-col h-screen overflow-y-auto z-10 w-full relative">
-                <Header
-                    isDark={isDark}
-                    toggleTheme={toggleTheme}
-                    setSidebarOpen={setSidebarOpen}
-                    userInitials={userInitials}
-                    userImage={session?.user?.image}
-                />
+                <header className="print:hidden w-full">
+                    <Header
+                        isDark={isDark}
+                        toggleTheme={toggleTheme}
+                        setSidebarOpen={setSidebarOpen}
+                        userInitials={userInitials}
+                        userImage={session?.user?.image}
+                    />
+                </header>
                 {children}
             </main>
 
@@ -87,6 +91,57 @@ export default function DashboardLayout({
         }
         .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
+        }
+        @media print {
+          @page {
+            size: auto;
+            margin: 10mm;
+          }
+          body {
+            background: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .liquid-bg, aside, header {
+             display: none !important;
+          }
+          main {
+             position: absolute;
+             left: 0;
+             top: 0;
+             width: 100% !important;
+             height: auto !important;
+             overflow: visible !important;
+             margin: 0 !important;
+             padding: 0 !important;
+             background: white !important;
+             color: black !important;
+          }
+          .glass-panel {
+             border: 1px solid #eee !important;
+             background:rgba(255,255,255,0.05) !important;
+             color: #111 !important;
+             box-shadow: none !important;
+             break-inside: avoid;
+             margin-bottom: 1rem;
+          }
+          h1, h2, h3, p, span, td, th {
+             color: #111 !important;
+          }
+          /* Ensure charts are visible */
+          /* Recharts Print Fixes */
+          .recharts-cartesian-axis-line, .recharts-cartesian-axis-tick-line {
+            stroke: #333 !important;
+          }
+          .recharts-cartesian-grid-horizontal line, .recharts-cartesian-grid-vertical line {
+            stroke: #ddd !important;
+          }
+          .recharts-text {
+            fill: #333 !important;
+          }
+          .recharts-legend-item-text {
+            color: #333 !important;
+          }
         }
       `}</style>
         </div>
