@@ -11,6 +11,13 @@ export async function getVehicles() {
   });
 }
 
+export async function getAvailableVehicles() {
+  return await prisma.vehicle.findMany({
+    where: { status: "AVAILABLE" },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export async function createVehicle(data: any) {
   const vehicle = await prisma.vehicle.create({
     data,
@@ -23,6 +30,13 @@ export async function createVehicle(data: any) {
 // --- Drivers ---
 export async function getDrivers() {
   return await prisma.driver.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getAvailableDrivers() {
+  return await prisma.driver.findMany({
+    where: { status: "OFF_DUTY" },
     orderBy: { createdAt: "desc" },
   });
 }
