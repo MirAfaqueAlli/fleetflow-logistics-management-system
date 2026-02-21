@@ -1,13 +1,32 @@
 "use client";
 
+import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { User, Mail, Shield, Calendar, Camera, Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
     const { data: session } = useSession();
     const user = session?.user;
+
+    const [notifications, setNotifications] = useState({
+        tripUpdates: true,
+        maintenanceAlerts: true,
+        systemAnnouncements: false,
+    });
+
+    const handleToggle = (key: keyof typeof notifications, label: string) => {
+        const newValue = !notifications[key];
+        setNotifications((prev) => ({ ...prev, [key]: newValue }));
+
+        if (newValue) {
+            toast.success(`${label} enabled`);
+        } else {
+            toast.info(`${label} disabled`);
+        }
+    };
 
     const userInitials = user?.name
         ? user.name.slice(0, 2).toUpperCase()
@@ -96,17 +115,27 @@ export default function ProfilePage() {
                         </h3>
                         <div className="space-y-4">
                             {[
-                                { title: "Trip Updates", desc: "Get notified when trips are dispatched or completed." },
-                                { title: "Maintenance Alerts", desc: "Receive alerts for scheduled maintenance and shop status." },
-                                { title: "System Announcements", desc: "Stay updated with the latest platform features and changes." }
-                            ].map((pref, i) => (
-                                <div key={i} className="flex items-center justify-between py-2">
+                                { id: "tripUpdates", title: "Trip Updates", desc: "Get notified when trips are dispatched or completed." },
+                                { id: "maintenanceAlerts", title: "Maintenance Alerts", desc: "Receive alerts for scheduled maintenance and shop status." },
+                                { id: "systemAnnouncements", title: "System Announcements", desc: "Stay updated with the latest platform features and changes." }
+                            ].map((pref) => (
+                                <div key={pref.id} className="flex items-center justify-between py-2">
                                     <div>
                                         <p className="font-medium">{pref.title}</p>
                                         <p className="text-xs text-[var(--muted-foreground)]">{pref.desc}</p>
                                     </div>
-                                    <div className="w-12 h-6 bg-[var(--primary)]/20 rounded-full relative cursor-pointer border border-[var(--card-border)]">
-                                        <div className="absolute right-1 top-1 w-4 h-4 bg-[var(--primary)] rounded-full shadow-sm" />
+                                    <div
+                                        onClick={() => handleToggle(pref.id as any, pref.title)}
+                                        className={`w-12 h-6 rounded-full relative cursor-pointer border transition-all duration-300 ${notifications[pref.id as keyof typeof notifications]
+                                            ? 'bg-[var(--primary)] border-[var(--primary)]'
+                                            : 'bg-black/20 border-[var(--card-border)]'
+                                            }`}
+                                    >
+                                        <motion.div
+                                            animate={{ x: notifications[pref.id as keyof typeof notifications] ? 24 : 4 }}
+                                            className={`absolute top-1 w-4 h-4 rounded-full shadow-sm transition-colors ${notifications[pref.id as keyof typeof notifications] ? 'bg-white' : 'bg-[var(--muted-foreground)]'
+                                                }`}
+                                        />
                                     </div>
                                 </div>
                             ))}
