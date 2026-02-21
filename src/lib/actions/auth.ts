@@ -2,9 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { Role } from "@/lib/types/enums";
+import { Role } from "@prisma/client";
 
-export async function signUp(data: any) {
+export async function signUp(data: { name: string; email: string; password: string; role: Role }) {
   const { name, email, password, role } = data;
 
   if (!email || !password || !name) {
@@ -27,7 +27,7 @@ export async function signUp(data: any) {
         name,
         email,
         password: hashedPassword,
-        role: role as Role,
+        role: role,
       },
     });
 
@@ -42,7 +42,7 @@ export async function updateUserRole(userId: string, role: Role) {
   try {
     await prisma.user.update({
       where: { id: userId },
-      data: { role: role as any },
+      data: { role },
     });
     return { success: true };
   } catch (error) {
@@ -50,3 +50,4 @@ export async function updateUserRole(userId: string, role: Role) {
     return { error: "Failed to update role" };
   }
 }
+

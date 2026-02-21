@@ -6,13 +6,14 @@ import Link from "next/link";
 import { signUp } from "@/lib/actions/auth";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
+import { Role } from "@prisma/client";
 
 export default function SignupPage() {
     const router = useRouter();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [role, setRole] = useState("MANAGER");
+    const [role, setRole] = useState<Role>("MANAGER" as Role);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -107,7 +108,7 @@ export default function SignupPage() {
                             <label className="text-sm font-medium text-[#bfc0d1]">Organization Role</label>
                             <select
                                 value={role}
-                                onChange={(e) => setRole(e.target.value)}
+                                onChange={(e) => setRole(e.target.value as Role)}
                                 className="w-full bg-[#1e202c] border border-[#bfc0d1]/20 rounded-xl px-4 py-3 text-[#bfc0d1] focus:outline-none focus:ring-2 focus:ring-[#60519b] focus:border-transparent transition-all duration-300"
                             >
                                 <option value="MANAGER">Fleet Manager</option>

@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { VehicleStatus, DriverStatus, TripStatus } from "@/lib/types/enums";
+import { VehicleStatus, DriverStatus, TripStatus } from "@prisma/client";
 
 // --- Vehicles ---
 export async function getVehicles() {
@@ -13,7 +13,7 @@ export async function getVehicles() {
 
 export async function getAvailableVehicles() {
   return await prisma.vehicle.findMany({
-    where: { status: "AVAILABLE" },
+    where: { status: VehicleStatus.AVAILABLE },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -36,7 +36,7 @@ export async function getDrivers() {
 
 export async function getAvailableDrivers() {
   return await prisma.driver.findMany({
-    where: { status: "OFF_DUTY" },
+    where: { status: DriverStatus.OFF_DUTY },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -87,19 +87,19 @@ export async function createTrip(data: any) {
   const trip = await prisma.trip.create({
     data: {
       ...data,
-      status: "DISPATCHED",
+      status: TripStatus.DISPATCHED,
     },
   });
 
   // 3. Status Update: Vehicle & Driver -> ON_TRIP
   await prisma.vehicle.update({
     where: { id: data.vehicleId },
-    data: { status: "ON_TRIP" },
+    data: { status: VehicleStatus.ON_TRIP },
   });
 
   await prisma.driver.update({
     where: { id: data.driverId },
-    data: { status: "ON_DUTY" },
+    data: { status: DriverStatus.ON_DUTY },
   });
 
   revalidatePath("/dispatch");
@@ -117,7 +117,7 @@ export async function completeTrip(tripId: string, finalOdometer: number) {
   await prisma.trip.update({
     where: { id: tripId },
     data: {
-      status: "COMPLETED",
+      status: TripStatus.COMPLETED,
       finalOdometer,
     },
   });
@@ -126,14 +126,14 @@ export async function completeTrip(tripId: string, finalOdometer: number) {
   await prisma.vehicle.update({
     where: { id: trip.vehicleId },
     data: { 
-      status: "AVAILABLE",
+      status: VehicleStatus.AVAILABLE,
       odometer: finalOdometer
     },
   });
 
   await prisma.driver.update({
     where: { id: trip.driverId },
-    data: { status: "OFF_DUTY" },
+    data: { status: DriverStatus.OFF_DUTY },
   });
 
   revalidatePath("/dispatch");
@@ -149,7 +149,7 @@ export async function logMaintenance(data: any) {
   // Logic: Adding vehicle to Service Log switches status to IN_SHOP
   await prisma.vehicle.update({
     where: { id: data.vehicleId },
-    data: { status: "IN_SHOP" },
+    data: { status: VehicleStatus.IN_SHOP },
   });
 
   // Also log as an expense
