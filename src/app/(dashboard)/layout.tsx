@@ -65,6 +65,7 @@ export default function DashboardLayout({
                     toggleTheme={toggleTheme}
                     setSidebarOpen={setSidebarOpen}
                     userInitials={userInitials}
+                    userImage={session?.user?.image}
                 />
                 {children}
             </main>
