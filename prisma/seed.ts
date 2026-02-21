@@ -1,4 +1,8 @@
-import { PrismaClient, VehicleStatus, DriverStatus, TripStatus } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+
+const VehicleStatus = { AVAILABLE: 'AVAILABLE', ON_TRIP: 'ON_TRIP', IN_SHOP: 'IN_SHOP', RETIRED: 'RETIRED' }
+const DriverStatus = { ON_DUTY: 'ON_DUTY', OFF_DUTY: 'OFF_DUTY', SUSPENDED: 'SUSPENDED' }
+const TripStatus = { DRAFT: 'DRAFT', DISPATCHED: 'DISPATCHED', COMPLETED: 'COMPLETED', CANCELLED: 'CANCELLED' }
 
 const prisma = new PrismaClient()
 
