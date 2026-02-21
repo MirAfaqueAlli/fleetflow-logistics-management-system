@@ -4,15 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon, Menu, LogOut, User } from "lucide-react";
 import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 interface HeaderProps {
     isDark: boolean;
     toggleTheme: () => void;
     setSidebarOpen: (open: boolean) => void;
     userInitials: string;
+    userImage?: string | null;
 }
 
-export const Header = ({ isDark, toggleTheme, setSidebarOpen, userInitials }: HeaderProps) => {
+export const Header = ({ isDark, toggleTheme, setSidebarOpen, userInitials, userImage }: HeaderProps) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -56,10 +58,20 @@ export const Header = ({ isDark, toggleTheme, setSidebarOpen, userInitials }: He
                 <div className="relative" ref={dropdownRef}>
                     <div
                         onClick={() => setDropdownOpen(!dropdownOpen)}
-                        className="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[#bfc0d1] border-2 border-[var(--card-border)] shadow-md cursor-pointer flex items-center justify-center hover:scale-105 transition-transform"
+                        className="w-10 h-10 rounded-full bg-gradient-to-tr from-[var(--primary)] to-[#bfc0d1] border-2 border-[var(--card-border)] shadow-md cursor-pointer flex items-center justify-center hover:scale-105 transition-transform overflow-hidden relative shrink-0"
                         title="Profile Menu"
                     >
-                        <span className="text-white font-bold text-sm">{userInitials}</span>
+                        {userImage ? (
+                            <Image
+                                src={userImage}
+                                alt="Profile Avatar"
+                                fill
+                                className="object-cover"
+                                referrerPolicy="no-referrer"
+                            />
+                        ) : (
+                            <span className="text-white font-bold text-sm tracking-wide">{userInitials}</span>
+                        )}
                     </div>
 
                     <AnimatePresence>
