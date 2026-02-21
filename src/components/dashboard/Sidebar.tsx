@@ -91,7 +91,7 @@ export const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     <SidebarItem href="/trips" icon={MapPin} text="Trip Dispatcher" active={pathname === '/trips'} onClick={handleLinkClick} />
                     <SidebarItem href="/maintenance" icon={Wrench} text="Maintenance" active={pathname === '/maintenance'} onClick={handleLinkClick} />
                     <SidebarItem href="/expenses" icon={Receipt} text="Trip & Expense" active={pathname === '/expenses'} onClick={handleLinkClick} />
-                    <SidebarItem href="/performance" icon={Activity} text="Performance" active={pathname === '/performance'} onClick={handleLinkClick} />
+                    <SidebarItem href="/performance" icon={Activity} text="Drivers & Performance" active={pathname === '/performance'} onClick={handleLinkClick} />
                     <SidebarItem href="/analytics" icon={BarChart3} text="Analytics" active={pathname === '/analytics'} onClick={handleLinkClick} />
                 </div>
             </motion.aside>

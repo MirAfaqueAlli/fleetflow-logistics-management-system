@@ -248,3 +248,7 @@ input[type="date"] {
 .light input[type="date"] {
   color-scheme: light;
 }
+
+*::-webkit-scrollbar {
+  display: none;
+}
