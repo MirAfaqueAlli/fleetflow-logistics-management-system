@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/lib/actions/auth";
 import { signIn } from "next-auth/react";
+import { toast } from "sonner";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -24,12 +25,25 @@ export default function SignupPage() {
             const result = await signUp({ name, email, password, role });
             if (result.error) {
                 setError(result.error);
+                toast.error(result.error);
+                setIsLoading(false);
             } else {
-                router.push("/login?message=Account created successfully");
+                toast.success("Account created successfully! Logging you in...");
+                const res = await signIn("credentials", {
+                    redirect: false,
+                    email,
+                    password,
+                });
+                if (!res?.error) {
+                    router.push("/dashboard");
+                } else {
+                    toast.error("Login failed after signup.");
+                    setIsLoading(false);
+                }
             }
         } catch (err) {
             setError("An unexpected error occurred.");
-        } finally {
+            toast.error("An unexpected error occurred.");
             setIsLoading(false);
         }
     };

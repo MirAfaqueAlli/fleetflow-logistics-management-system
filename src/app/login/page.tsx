@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -25,13 +26,16 @@ export default function LoginPage() {
             });
 
             if (!res?.error) {
+                toast.success("Welcome back!");
                 router.push("/dashboard"); // Successful login
             } else {
                 setError("Invalid email or password");
+                toast.error("Invalid email or password");
+                setIsLoading(false);
             }
         } catch (err) {
             setError("An unexpected error occurred.");
-        } finally {
+            toast.error("An unexpected error occurred.");
             setIsLoading(false);
         }
     };
