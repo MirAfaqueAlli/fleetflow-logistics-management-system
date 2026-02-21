@@ -42,7 +42,7 @@ export default function LoadingTrips() {
                     transition={{ delay: 0.1 }}
                     className="glass-panel rounded-3xl p-6 lg:p-8 shadow-xl border border-[var(--card-border)] bg-[var(--card)]/50 relative overflow-hidden h-fit"
                 >
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[rgba(255,255,255,0.1)] to-[rgba(255,255,255,0.05)]" />
+                    <div className="absolute -top-20 -left-20 w-40 h-40 bg-[rgba(255,255,255,0.05)] rounded-full blur-3xl pointer-events-none" />
 
                     <div className="w-48 h-8 rounded-lg bg-[rgba(255,255,255,0.05)] animate-pulse mb-8" />
 
