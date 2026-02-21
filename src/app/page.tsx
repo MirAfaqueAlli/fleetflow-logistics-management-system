@@ -554,13 +554,13 @@ export default function LandingPage() {
             { number: 1200, suffix: "+", label: "Active Users", icon: Users },
             { number: 45, suffix: "+", label: "Countries Served", icon: Globe },
           ].map((stat, i) => (
-            <div key={i} className="text-center group">
-              <div className="w-12 h-12 rounded-xl bg-[#60519b]/10 border border-[#60519b]/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-[#60519b]/20 group-hover:scale-110 transition-all duration-500">
-                <stat.icon size={20} className="text-[#60519b]" />
+            <div key={i} className="flex flex-col items-center text-center group">
+              <div className="w-14 h-14 rounded-2xl bg-[#a78bfa]/10 border border-[#a78bfa]/20 flex items-center justify-center mb-4 group-hover:bg-[#a78bfa]/20 group-hover:border-[#a78bfa]/30 group-hover:scale-110 transition-all duration-500 shadow-lg shadow-[#a78bfa]/5">
+                <stat.icon size={28} className="text-[#c4b5fd]" />
               </div>
-              <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1">
+              <div className="text-3xl md:text-4xl font-bold tracking-tight mb-1 flex items-center justify-center">
                 <span className="stat-number" data-target={stat.number}>{stat.number}</span>
-                <span className="text-[#60519b]">{stat.suffix}</span>
+                <span className="text-[#a78bfa]">{stat.suffix}</span>
               </div>
               <p className="text-[#8b8c9d] text-sm font-medium">{stat.label}</p>
             </div>
