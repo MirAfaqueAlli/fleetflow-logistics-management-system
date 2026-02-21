@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Truck, Search, Plus, X, Power, Trash2, SlidersHorizontal, Package, AlertCircle } from "lucide-react";
-import { createVehicle, deleteVehicle, toggleVehicleRetired, seedVehicles, VehicleFormData } from "@/lib/actions/vehicles";
+import { Truck, Search, Plus, X, Power, Trash2, Package, AlertCircle } from "lucide-react";
+import { createVehicle, deleteVehicle, toggleVehicleRetired, seedVehicles } from "@/lib/actions/vehicles";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { toast } from "sonner";
 
 // Helper to get status colors
@@ -21,6 +22,7 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
     const [vehicles, setVehicles] = useState(initialVehicles);
     const [searchQuery, setSearchQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [vehicleType, setVehicleType] = useState("Truck");
     const [isPending, startTransition] = useTransition();
 
     const filteredVehicles = vehicles.filter(v =>
@@ -34,7 +36,7 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
         const fd = new FormData(e.currentTarget);
         const data = {
             name: fd.get("name") as string,
-            model: fd.get("model") as string,
+            model: vehicleType,
             licensePlate: fd.get("licensePlate") as string,
             maxLoadCapacity: Number(fd.get("maxLoadCapacity")),
             odometer: Number(fd.get("odometer")),
@@ -139,12 +141,6 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                             className="w-full bg-black/20 border border-[var(--card-border)] rounded-xl pl-10 pr-4 py-2.5 outline-none focus:border-[#60519b] transition-colors text-sm"
                         />
                     </div>
-                    <div className="flex gap-2">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/20 border border-[var(--card-border)] text-sm hover:bg-black/40 transition-colors">
-                            <SlidersHorizontal size={16} />
-                            <span>Filter</span>
-                        </button>
-                    </div>
                 </div>
 
                 {/* Table */}
@@ -229,15 +225,15 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                             initial={{ scale: 0.95, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.95, y: 20 }}
-                            className="bg-[#1e1f2a] border border-[var(--card-border)] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+                            className="glass-panel panel-shine w-full max-w-lg rounded-2xl p-0 relative z-10 shadow-2xl overflow-hidden bg-[var(--background)]/90 border border-[var(--card-border)]"
                         >
-                            <div className="p-6 border-b border-[var(--card-border)] flex justify-between items-center bg-[#252632]">
+                            <div className="p-6 border-b border-[var(--card-border)] flex justify-between items-center bg-[var(--card)]/50 backdrop-blur-md">
                                 <h3 className="text-xl font-bold flex items-center gap-2">
-                                    <Truck className="text-[#60519b]" />
+                                    <Truck className="text-[var(--primary)]" />
                                     New Vehicle Registration
                                 </h3>
-                                <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-white transition-colors">
-                                    <X size={24} />
+                                <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)] text-[var(--muted-foreground)] hover:text-white transition-colors">
+                                    <X size={20} />
                                 </button>
                             </div>
 
@@ -268,18 +264,12 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Vehicle Type</label>
-                                        <select
-                                            required
-                                            name="model"
-                                            defaultValue=""
-                                            className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors appearance-none"
-                                        >
-                                            <option value="" disabled>Select type...</option>
-                                            <option value="Truck">Truck</option>
-                                            <option value="Van">Van</option>
-                                            <option value="Mini">Mini Courier</option>
-                                            <option value="Bike">Delivery Bike</option>
-                                        </select>
+                                        <CustomSelect
+                                            options={["Truck", "Van", "Mini", "Bike"]}
+                                            value={vehicleType}
+                                            onChange={setVehicleType}
+                                            variant="block"
+                                        />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Max Payload (kg)</label>
@@ -327,6 +317,6 @@ export default function VehiclesClient({ initialVehicles }: { initialVehicles: a
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }

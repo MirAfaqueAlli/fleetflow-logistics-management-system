@@ -90,6 +90,7 @@ enum DriverStatus {
   ON_DUTY
   OFF_DUTY
   SUSPENDED
+  RETIRED
 }
 
 model Driver {

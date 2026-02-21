@@ -269,16 +269,15 @@ const NewServiceModal = ({
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
                         <label className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wider">Vehicle</label>
-                        <select
-                            required
-                            className="w-full px-4 py-2.5 rounded-xl glass-panel text-sm focus:outline-none focus:ring-1 focus:ring-[var(--primary)] bg-[var(--background)]"
+                        <CustomSelect
+                            options={vehicles.map(v => ({
+                                value: v.id,
+                                label: `${v.name} (${v.licensePlate})`
+                            }))}
                             value={vehicleId}
-                            onChange={e => setVehicleId(e.target.value)}
-                        >
-                            {vehicles.map(v => (
-                                <option key={v.id} value={v.id}>{v.name} ({v.licensePlate})</option>
-                            ))}
-                        </select>
+                            onChange={setVehicleId}
+                            variant="block"
+                        />
                     </div>
 
                     <div className="space-y-2">

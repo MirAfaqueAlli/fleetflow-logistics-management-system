@@ -338,14 +338,7 @@ export default function LandingPage() {
         </p>
 
         <div ref={ctaRef} className="flex flex-col sm:flex-row gap-5 items-center">
-          {isAuthenticated ? (
-            <Link
-              href="/dashboard"
-              className="group px-10 py-4 bg-[#60519b] rounded-2xl font-bold text-lg hover:bg-[#7b6ac6] transition-all shadow-2xl shadow-[#60519b]/40 flex items-center gap-3 hover:scale-[1.03] active:scale-[0.98]"
-            >
-              Open Dashboard <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          ) : (
+          {!isAuthenticated && (
             <>
               <Link
                 href="/signup"
@@ -525,7 +518,7 @@ export default function LandingPage() {
       <section className="relative z-10 max-w-5xl mx-auto px-8 py-20">
         <div className="text-center mb-14">
           <p className="text-sm font-semibold text-[#a78bfa] uppercase tracking-widest mb-3">Workflow</p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight">
             Get Started in{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#a78bfa] via-[#c4b5fd] to-[#e0d4ff]">
               3 Simple Steps
@@ -538,14 +531,14 @@ export default function LandingPage() {
             { step: "02", title: "Dispatch & Track", desc: "Create trips, assign drivers, and monitor every route in real-time from one dashboard.", icon: MapPin },
             { step: "03", title: "Analyze & Optimize", desc: "Review costs, performance metrics, and utilization reports to maximize efficiency.", icon: BarChart3 },
           ].map((item, i) => (
-            <div key={i} className="step-card flex items-start gap-6 p-6 rounded-2xl bg-[#31323e]/30 border border-white/5 hover:border-[#60519b]/20 transition-all group">
-              <div className="shrink-0 w-14 h-14 rounded-2xl bg-[#60519b]/10 border border-[#60519b]/20 flex items-center justify-center group-hover:bg-[#60519b]/20 group-hover:scale-110 transition-all duration-500">
-                <item.icon size={22} className="text-[#60519b]" />
+            <div key={i} className="step-card flex items-start gap-6 p-8 rounded-[2rem] bg-[#1e202c]/60 border border-white/5 hover:border-[#a78bfa]/30 transition-all group backdrop-blur-xl">
+              <div className="shrink-0 w-16 h-16 rounded-2xl bg-[#a78bfa]/15 border border-[#a78bfa]/20 flex items-center justify-center group-hover:bg-[#a78bfa]/25 group-hover:scale-110 transition-all duration-500 shadow-[0_0_20px_rgba(167,139,250,0.15)]">
+                <item.icon size={26} className="text-[#c4b5fd]" />
               </div>
               <div>
-                <span className="text-xs font-mono text-[#60519b] tracking-widest">STEP {item.step}</span>
-                <h3 className="text-lg font-bold mt-1 mb-2">{item.title}</h3>
-                <p className="text-sm text-[#8b8c9d] leading-relaxed">{item.desc}</p>
+                <span className="text-sm font-bold font-mono text-[#a78bfa] tracking-[0.2em] opacity-80">STEP {item.step}</span>
+                <h3 className="text-xl font-bold mt-1 mb-2 text-white group-hover:text-[#c4b5fd] transition-colors">{item.title}</h3>
+                <p className="text-[#8b8c9d] leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}

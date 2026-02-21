@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { motion } from "framer-motion";
-import { Search, CheckCircle2, AlertCircle } from "lucide-react";
+import { Search, CheckCircle2, AlertCircle, Truck, Package, MapPin, Gauge } from "lucide-react";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { toast } from "sonner";
 import { createTrip } from "@/lib/actions/logistics";
 
@@ -150,17 +151,16 @@ export default function TripsClient({ initialTrips, availableVehicles, available
                             {/* Select Vehicle */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm font-medium text-[var(--muted-foreground)]">Select Vehicle:</label>
-                                <select
-                                    required
+                                <CustomSelect
+                                    options={availableVehicles.map((v: any) => ({
+                                        value: v.id,
+                                        label: `${v.name} (${v.licensePlate})`
+                                    }))}
                                     value={selectedVehicleId}
-                                    onChange={(e) => setSelectedVehicleId(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl glass-panel border border-[var(--card-border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm text-[var(--foreground)] bg-[var(--background)] appearance-none"
-                                >
-                                    <option value="" className="bg-[var(--background)] text-[var(--foreground)]">-- Choose an available vehicle --</option>
-                                    {availableVehicles.map((v: any) => (
-                                        <option key={v.id} value={v.id} className="bg-[var(--background)] text-[var(--foreground)]">{v.name} (Max: {v.maxLoadCapacity}kg)</option>
-                                    ))}
-                                </select>
+                                    onChange={setSelectedVehicleId}
+                                    variant="block"
+                                    placeholder="Choose an available vehicle"
+                                />
                             </div>
 
                             {/* Cargo Weight */}
@@ -179,17 +179,16 @@ export default function TripsClient({ initialTrips, availableVehicles, available
                             {/* Select Driver */}
                             <div className="flex flex-col gap-1.5">
                                 <label className="text-sm font-medium text-[var(--muted-foreground)]">Select Driver:</label>
-                                <select
-                                    required
+                                <CustomSelect
+                                    options={availableDrivers.map((d: any) => ({
+                                        value: d.id,
+                                        label: `${d.name} (${d.category})`
+                                    }))}
                                     value={selectedDriverId}
-                                    onChange={(e) => setSelectedDriverId(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl glass-panel border border-[var(--card-border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-sm text-[var(--foreground)] bg-[var(--background)] appearance-none"
-                                >
-                                    <option value="" className="bg-[var(--background)] text-[var(--foreground)]">-- Choose an available driver --</option>
-                                    {availableDrivers.map((d: any) => (
-                                        <option key={d.id} value={d.id} className="bg-[var(--background)] text-[var(--foreground)]">{d.name} ({d.category})</option>
-                                    ))}
-                                </select>
+                                    onChange={setSelectedDriverId}
+                                    variant="block"
+                                    placeholder="Choose an available driver"
+                                />
                             </div>
 
                             {/* Origin Address */}

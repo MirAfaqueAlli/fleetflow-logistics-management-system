@@ -34,7 +34,7 @@ export async function createVehicle(data: VehicleFormData) {
             licensePlate: data.licensePlate.toUpperCase(),
             maxLoadCapacity: Number(data.maxLoadCapacity),
             odometer: Number(data.odometer),
-            status: VehicleStatus.AVAILABLE,
+            status: "AVAILABLE" as any,
         },
     });
     revalidatePath("/vehicles");
@@ -66,7 +66,7 @@ export async function toggleVehicleRetired(id: string, currentStatus: VehicleSta
 
     const vehicle = await prisma.vehicle.update({
         where: { id },
-        data: { status: newStatus },
+        data: { status: newStatus as any },
     });
     revalidatePath("/vehicles");
     revalidatePath("/dashboard");
@@ -74,13 +74,25 @@ export async function toggleVehicleRetired(id: string, currentStatus: VehicleSta
 }
 
 export async function deleteVehicle(id: string) {
-    // Only allow deletion if no active trips
+    // Check for active or pending trips
     const active = await prisma.trip.count({
-        where: { vehicleId: id, status: { in: ["DISPATCHED"] } },
+        where: { vehicleId: id, status: { in: ["DISPATCHED", "DRAFT"] } },
     });
-    if (active > 0) throw new Error("Cannot delete a vehicle with active trips.");
 
-    await prisma.vehicle.delete({ where: { id } });
+    if (active > 0) {
+        throw new Error("Cannot delete a vehicle with active, drafted, or pending trips.");
+    }
+
+    try {
+        await prisma.vehicle.delete({ where: { id } });
+    } catch (error: any) {
+        // P2003 is the Prisma error code for foreign key constraint violation
+        if (error.code === 'P2003') {
+            throw new Error("This vehicle has historical trip records and cannot be permanently deleted. Try setting it to 'Retired' instead to maintain data integrity.");
+        }
+        throw error;
+    }
+
     revalidatePath("/vehicles");
     revalidatePath("/dashboard");
 }

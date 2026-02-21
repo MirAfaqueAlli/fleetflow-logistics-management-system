@@ -2,8 +2,9 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Search, Plus, X, AlertOctagon, Trash2, SlidersHorizontal, Users, AlertCircle } from "lucide-react";
-import { createDriver, deleteDriver, updateDriverStatus, seedDrivers, DriverFormData } from "@/lib/actions/drivers";
+import { Shield, Search, Plus, X, AlertOctagon, Trash2, Users, AlertCircle } from "lucide-react";
+import { createDriver, deleteDriver, updateDriverStatus, seedDrivers } from "@/lib/actions/drivers";
+import CustomSelect from "@/components/ui/CustomSelect";
 import { toast } from "sonner";
 import { DriverStatus } from "@prisma/client";
 
@@ -15,11 +16,12 @@ const formatDate = (dateString: string | Date) => {
     return `${month}/${year}`;
 };
 
-const getStatusColor = (status: DriverStatus) => {
+const getStatusColor = (status: any) => {
     switch (status) {
         case "ON_DUTY": return "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
-        case "OFF_DUTY": return "text-blue-500 bg-blue-500/10 border-blue-500/20";
+        case "OFF_DUTY": return "text-blue-400 bg-blue-500/10 border-blue-500/20";
         case "SUSPENDED": return "text-rose-500 bg-rose-500/10 border-rose-500/20";
+        case "RETIRED": return "text-slate-400 bg-slate-500/10 border-slate-500/20";
         default: return "text-gray-500 bg-gray-500/10 border-gray-500/20";
     }
 };
@@ -34,6 +36,7 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
     const [drivers, setDrivers] = useState(initialDrivers);
     const [searchQuery, setSearchQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [category, setCategory] = useState("Truck");
     const [isPending, startTransition] = useTransition();
 
     const filteredDrivers = drivers.filter(d =>
@@ -48,7 +51,7 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
             name: fd.get("name") as string,
             licenseNumber: fd.get("licenseNumber") as string,
             licenseExpiry: fd.get("licenseExpiry") as string,
-            category: fd.get("category") as string,
+            category: category,
         };
 
         startTransition(async () => {
@@ -154,17 +157,6 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                             className="w-full bg-black/20 border border-[var(--card-border)] rounded-xl pl-10 pr-4 py-2.5 outline-none focus:border-[#60519b] transition-colors text-sm"
                         />
                     </div>
-                    <div className="flex gap-2 text-sm">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/20 border border-[var(--card-border)] hover:bg-black/40 transition-colors">
-                            Group by
-                        </button>
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/20 border border-[var(--card-border)] hover:bg-black/40 transition-colors">
-                            <SlidersHorizontal size={16} /> Filter
-                        </button>
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black/20 border border-[var(--card-border)] hover:bg-black/40 transition-colors">
-                            Sort by...
-                        </button>
-                    </div>
                 </div>
 
                 {/* Table */}
@@ -259,15 +251,15 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                             initial={{ scale: 0.95, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.95, y: 20 }}
-                            className="bg-[#1e1f2a] border border-[var(--card-border)] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden"
+                            className="glass-panel panel-shine w-full max-w-lg rounded-2xl p-0 relative z-10 shadow-2xl overflow-hidden bg-[var(--background)]/90 border border-[var(--card-border)]"
                         >
-                            <div className="p-6 border-b border-[var(--card-border)] flex justify-between items-center bg-[#252632]">
+                            <div className="p-6 border-b border-[var(--card-border)] flex justify-between items-center bg-[var(--card)]/50 backdrop-blur-md">
                                 <h3 className="text-xl font-bold flex items-center gap-2">
-                                    <Shield className="text-[#60519b]" />
-                                    Driver Form & Compliance
+                                    <Shield className="text-[var(--primary)]" />
+                                    Driver Registration
                                 </h3>
-                                <button onClick={() => setIsModalOpen(false)} className="text-[var(--muted-foreground)] hover:text-white transition-colors">
-                                    <X size={24} />
+                                <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-[rgba(255,255,255,0.1)] text-[var(--muted-foreground)] hover:text-white transition-colors">
+                                    <X size={20} />
                                 </button>
                             </div>
 
@@ -307,18 +299,12 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
 
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-medium text-[var(--muted-foreground)] w-full block">Vehicle Category</label>
-                                    <select
-                                        required
-                                        name="category"
-                                        defaultValue=""
-                                        className="w-full bg-black/30 border border-[var(--card-border)] rounded-xl px-4 py-2.5 outline-none focus:border-[#60519b] transition-colors appearance-none"
-                                    >
-                                        <option value="" disabled>Select category...</option>
-                                        <option value="Truck">Truck</option>
-                                        <option value="Van">Van</option>
-                                        <option value="Mini">Mini Delivery</option>
-                                        <option value="Bike">Motorcycle/Bike</option>
-                                    </select>
+                                    <CustomSelect
+                                        options={["Truck", "Van", "Mini", "Bike"]}
+                                        value={category}
+                                        onChange={setCategory}
+                                        variant="block"
+                                    />
                                 </div>
 
                                 <div className="pt-6 flex justify-end gap-3">
@@ -342,6 +328,6 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </div >
     );
 }

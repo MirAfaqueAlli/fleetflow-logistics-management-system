@@ -4,12 +4,17 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+interface Option {
+    value: string;
+    label: string;
+}
+
 interface CustomSelectProps {
-    options: string[];
+    options: (string | Option)[];
     value: string;
     onChange: (value: string) => void;
     className?: string;
-    variant?: "pill" | "block"; // pill = rounded filter style, block = full-width form field
+    variant?: "pill" | "block";
     placeholder?: string;
 }
 
@@ -23,6 +28,13 @@ export default function CustomSelect({
 }: CustomSelectProps) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+
+    const normalizedOptions: Option[] = options.map(opt =>
+        typeof opt === "string" ? { value: opt, label: opt } : opt
+    );
+
+    const selectedOption = normalizedOptions.find(opt => opt.value === value);
+    const displayLabel = selectedOption ? selectedOption.label : (placeholder || "Select...");
 
     // Close on outside click
     useEffect(() => {
@@ -64,7 +76,7 @@ export default function CustomSelect({
         `}
             >
                 <span className={value ? "" : "text-[var(--muted-foreground)]"}>
-                    {value || placeholder || "Select..."}
+                    {displayLabel}
                 </span>
                 <ChevronDown
                     size={14}
@@ -89,14 +101,14 @@ export default function CustomSelect({
             `}
                     >
                         <div className="py-1">
-                            {options.map((option) => {
-                                const isSelected = option === value;
+                            {normalizedOptions.map((option) => {
+                                const isSelected = option.value === value;
                                 return (
                                     <button
-                                        key={option}
+                                        key={option.value}
                                         type="button"
                                         onClick={() => {
-                                            onChange(option);
+                                            onChange(option.value);
                                             setIsOpen(false);
                                         }}
                                         className={`
@@ -108,7 +120,7 @@ export default function CustomSelect({
                                             }
                     `}
                                     >
-                                        <span>{option}</span>
+                                        <span>{option.label}</span>
                                         {isSelected && (
                                             <Check size={14} className="text-[var(--primary)] shrink-0" />
                                         )}

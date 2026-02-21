@@ -19,9 +19,9 @@ async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promis
             return await operation();
         } catch (error: any) {
             lastError = error;
-            const isTimeout = 
-                error.message?.includes("connection pool") || 
-                error.message?.includes("Can't reach database") || 
+            const isTimeout =
+                error.message?.includes("connection pool") ||
+                error.message?.includes("Can't reach database") ||
                 error.message?.includes("Timed out") ||
                 error.code === 'P1001'; // Can't reach database server
 
@@ -38,6 +38,7 @@ async function withRetry<T>(operation: () => Promise<T>, maxRetries = 3): Promis
 
 export async function getDrivers() {
     return withRetry(async () => {
+        // Fetch all drivers with their trips to calculate completion rates implicitly
         const drivers = await prisma.driver.findMany({
             orderBy: { createdAt: "desc" },
             include: {
@@ -50,9 +51,9 @@ export async function getDrivers() {
             },
         });
 
-        return drivers.map(driver => {
+        return drivers.map((driver: any) => {
             const totalTrips = driver.trips.length;
-            const completedTrips = driver.trips.filter(t => t.status === "COMPLETED").length;
+            const completedTrips = driver.trips.filter((t: any) => t.status === "COMPLETED").length;
             const completionRate = totalTrips > 0 ? Math.round((completedTrips / totalTrips) * 100) : 100;
 
             return {
@@ -76,9 +77,9 @@ export async function createDriver(data: DriverFormData) {
                 licenseNumber: data.licenseNumber.toUpperCase(),
                 licenseExpiry: new Date(data.licenseExpiry),
                 category: data.category,
-                status: DriverStatus.OFF_DUTY,
+                status: "OFF_DUTY" as any,
                 safetyScore: 100,
-                // complaints: 0 is handled by DB @default(0) to avoid client sync issues
+                complaints: 0,
             },
         });
         revalidatePath("/performance");
@@ -91,7 +92,7 @@ export async function updateDriverStatus(id: string, targetStatus: DriverStatus)
     return withRetry(async () => {
         const driver = await prisma.driver.update({
             where: { id },
-            data: { status: targetStatus },
+            data: { status: targetStatus as any },
         });
         revalidatePath("/performance");
         revalidatePath("/dashboard");
@@ -102,11 +103,23 @@ export async function updateDriverStatus(id: string, targetStatus: DriverStatus)
 export async function deleteDriver(id: string) {
     return withRetry(async () => {
         const active = await prisma.trip.count({
-            where: { driverId: id, status: { in: ["DISPATCHED"] } },
+            where: { driverId: id, status: { in: ["DISPATCHED", "DRAFT"] } },
         });
-        if (active > 0) throw new Error("Cannot delete a driver with active trips.");
 
-        await prisma.driver.delete({ where: { id } });
+        if (active > 0) {
+            throw new Error("Cannot delete a driver with active, drafted, or pending trips.");
+        }
+
+        try {
+            await prisma.driver.delete({ where: { id } });
+        } catch (error: any) {
+            // P2003 is the Prisma error code for foreign key constraint violation
+            if (error.code === 'P2003') {
+                throw new Error("This driver has historical trip records and cannot be permanently deleted. Try suspending them instead to maintain data integrity.");
+            }
+            throw error;
+        }
+
         revalidatePath("/performance");
         revalidatePath("/dashboard");
     });
@@ -123,12 +136,12 @@ export async function seedDrivers() {
         const pastExpired = new Date(); pastExpired.setFullYear(pastExpired.getFullYear() - 1);
 
         const mockDrivers = [
-            { name: "John Doe", licenseNumber: "DL-23223", licenseExpiry: future1, category: "Truck", status: DriverStatus.ON_DUTY, safetyScore: 89, complaints: 4 },
-            { name: "Alice Smith", licenseNumber: "DL-19943", licenseExpiry: future2, category: "Van", status: DriverStatus.OFF_DUTY, safetyScore: 98, complaints: 0 },
-            { name: "Bob Johnson", licenseNumber: "DL-88432", licenseExpiry: pastExpired, category: "Truck", status: DriverStatus.SUSPENDED, safetyScore: 65, complaints: 8 },
-            { name: "Charlie Davis", licenseNumber: "DL-65321", licenseExpiry: future3, category: "Mini", status: DriverStatus.ON_DUTY, safetyScore: 92, complaints: 1 },
-            { name: "Eve Miller", licenseNumber: "DL-40291", licenseExpiry: future1, category: "Bike", status: DriverStatus.OFF_DUTY, safetyScore: 100, complaints: 0 },
-            { name: "Frank Wilson", licenseNumber: "DL-11847", licenseExpiry: future2, category: "Truck", status: DriverStatus.OFF_DUTY, safetyScore: 81, complaints: 3 },
+            { name: "John Doe", licenseNumber: "DL-23223", licenseExpiry: future1, category: "Truck", status: "ON_DUTY" as any, safetyScore: 89, complaints: 4 },
+            { name: "Alice Smith", licenseNumber: "DL-19943", licenseExpiry: future2, category: "Van", status: "OFF_DUTY" as any, safetyScore: 98, complaints: 0 },
+            { name: "Bob Johnson", licenseNumber: "DL-88432", licenseExpiry: pastExpired, category: "Truck", status: "SUSPENDED" as any, safetyScore: 65, complaints: 8 },
+            { name: "Charlie Davis", licenseNumber: "DL-65321", licenseExpiry: future3, category: "Mini", status: "ON_DUTY" as any, safetyScore: 92, complaints: 1 },
+            { name: "Eve Miller", licenseNumber: "DL-40291", licenseExpiry: future1, category: "Bike", status: "OFF_DUTY" as any, safetyScore: 100, complaints: 0 },
+            { name: "Frank Wilson", licenseNumber: "DL-11847", licenseExpiry: future2, category: "Truck", status: "OFF_DUTY" as any, safetyScore: 81, complaints: 3 },
         ];
 
         await prisma.driver.createMany({ data: mockDrivers });
