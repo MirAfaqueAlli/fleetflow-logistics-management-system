@@ -33,7 +33,7 @@ export default async function DashboardPage() {
             vehicle: `${v.name} (${v.licensePlate})`,
             type: v.model,
             driver: activeTrip?.driver?.name || "Unassigned",
-            region: activeTrip?.destination || "Depot", // Mocking region based on active trip destination if dispatched
+            region: activeTrip?.destination || "Depot", // Assigning region based on active trip destination if dispatched
             status: statusDisplay
         };
     });
