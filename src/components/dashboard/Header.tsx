@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon, Menu, LogOut, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface HeaderProps {
     isDark: boolean;
@@ -87,12 +88,13 @@ export const Header = ({ isDark, toggleTheme, setSidebarOpen, userInitials, user
                                     <p className="text-sm font-semibold text-[var(--foreground)]">My Account</p>
                                 </div>
                                 <div className="flex flex-col">
-                                    <button
+                                    <Link
+                                        href="/profile"
                                         className="w-full text-left px-4 py-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] hover:bg-[rgba(255,255,255,0.05)] transition-colors flex items-center gap-2"
                                         onClick={() => setDropdownOpen(false)}
                                     >
                                         <User size={16} /> Profile Settings
-                                    </button>
+                                    </Link>
                                     <button
                                         onClick={() => signOut()}
                                         className="w-full text-left px-4 py-2 text-sm text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center gap-2 mt-1"
