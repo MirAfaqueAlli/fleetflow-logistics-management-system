@@ -79,7 +79,6 @@ export async function createDriver(data: DriverFormData) {
                 category: data.category,
                 status: "OFF_DUTY" as any,
                 safetyScore: 100,
-                // Removed complaints to fix TS error while client is out of sync. DB handles default(0).
             },
         });
         revalidatePath("/performance");

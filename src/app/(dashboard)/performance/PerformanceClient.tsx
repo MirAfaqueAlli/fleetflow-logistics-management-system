@@ -160,7 +160,7 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                 </div>
 
                 {/* Table */}
-                <div className="flex-1 overflow-auto custom-scrollbar">
+                <div className="flex-1 overflow-auto custom-scrollbar" data-lenis-prevent>
                     <table className="w-full text-left border-collapse whitespace-nowrap">
                         <thead className="sticky top-0 bg-[var(--card)]/95 backdrop-blur-md z-10 shadow-sm">
                             <tr>

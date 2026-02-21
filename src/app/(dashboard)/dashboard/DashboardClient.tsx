@@ -115,7 +115,7 @@ export default function DashboardClient({ initialFleetData }: { initialFleetData
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="glass-panel rounded-2xl overflow-hidden mt-8 shadow-xl"
             >
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto" data-lenis-prevent>
                     <table className="w-full text-left border-collapse min-w-[600px]">
                         <thead>
                             <tr className="bg-[rgba(255,255,255,0.04)] text-[var(--primary)] text-sm border-b border-[var(--card-border)]">

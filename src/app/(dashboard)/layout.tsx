@@ -49,7 +49,7 @@ export default function DashboardLayout({
         : session?.user?.email?.slice(0, 2).toUpperCase() || "FA";
 
     return (
-        <div className="min-h-screen relative flex text-[var(--foreground)] font-sans overflow-hidden">
+        <div className="min-h-screen relative flex text-[var(--foreground)] font-sans">
             {/* Liquid Background */}
             <div className="liquid-bg">
                 <div className="blob bg-[var(--blob-1)] w-[600px] h-[600px] top-[-10%] left-[-10%]" />
@@ -57,11 +57,11 @@ export default function DashboardLayout({
                 <div className="blob bg-[var(--blob-3)] w-[500px] h-[500px] top-[30%] left-[40%]" />
             </div>
 
-            <aside className="print:hidden h-screen z-50">
+            <aside className="print:hidden sticky top-0 h-screen z-50">
                 <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
             </aside>
 
-            <main className="flex-1 flex flex-col h-screen overflow-y-auto z-10 w-full relative">
+            <main className="flex-1 flex flex-col min-h-screen z-10 w-full relative">
                 <header className="print:hidden w-full">
                     <Header
                         isDark={isDark}

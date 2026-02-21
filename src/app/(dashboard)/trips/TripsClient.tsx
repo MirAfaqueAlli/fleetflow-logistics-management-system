@@ -96,7 +96,7 @@ export default function TripsClient({ initialTrips, availableVehicles, available
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]">
+                    <div className="overflow-x-auto rounded-xl border border-[var(--card-border)]" data-lenis-prevent>
                         <table className="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr className="bg-[rgba(255,255,255,0.04)] text-[var(--primary)] text-sm border-b border-[var(--card-border)]">
