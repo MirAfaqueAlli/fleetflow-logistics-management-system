@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-text-muted: var(--text-muted);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* LIGHT THEME */
+  --background: #fdfdfd;
+  --foreground: #1e202c; /* User palette dark used for text */
+  --primary: #60519b;    /* User palette */
+  --primary-hover: #7b6ac6;
+  --secondary: #e6e7ee;  /* Lighter secondary */
+  --border: rgba(96, 81, 155, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --text-muted: #31323e; /* User palette */
+}
+
+.dark {
+  /* DARK THEME */
+  --background: #1e202c; /* User palette */
+  --foreground: #bfc0d1; /* User palette */
+  --primary: #60519b;    /* User palette */
+  --primary-hover: #7b6ac6;
+  --secondary: #31323e;  /* User palette */
+  --border: rgba(191, 192, 209, 0.1);
+  --glass-bg: rgba(49, 50, 62, 0.5);
+  --glass-border: rgba(191, 192, 209, 0.1);
+  --text-muted: #8b8c9d;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Advanced Liquid Glass Utility */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+.glass-panel-hover:hover {
+  background: color-mix(in srgb, var(--glass-bg) 80%, var(--primary) 20%);
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Beautiful Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }

@@ -1,0 +1,27 @@
+export enum Role {
+  NONE = "NONE",
+  MANAGER = "MANAGER",
+  DISPATCHER = "DISPATCHER",
+  SAFETY_OFFICER = "SAFETY_OFFICER",
+  FINANCIAL_ANALYST = "FINANCIAL_ANALYST",
+}
+
+export enum VehicleStatus {
+  AVAILABLE = "AVAILABLE",
+  ON_TRIP = "ON_TRIP",
+  IN_SHOP = "IN_SHOP",
+  RETIRED = "RETIRED",
+}
+
+export enum DriverStatus {
+  ON_DUTY = "ON_DUTY",
+  OFF_DUTY = "OFF_DUTY",
+  SUSPENDED = "SUSPENDED",
+}
+
+export enum TripStatus {
+  DRAFT = "DRAFT",
+  DISPATCHED = "DISPATCHED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+}

@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  NONE
+  MANAGER
+  DISPATCHER
+  SAFETY_OFFICER
+  FINANCIAL_ANALYST
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  role          Role      @default(NONE)
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  ON_TRIP
+  IN_SHOP
+  RETIRED
+}
+
+model Vehicle {
+  id               String           @id @default(cuid())
+  name             String
+  model            String
+  licensePlate     String           @unique
+  maxLoadCapacity  Float            // in kg or tons
+  odometer         Float            @default(0)
+  status           VehicleStatus    @default(AVAILABLE)
+  trips            Trip[]
+  maintenanceLogs  MaintenanceLog[]
+  expenses         Expense[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+enum DriverStatus {
+  ON_DUTY
+  OFF_DUTY
+  SUSPENDED
+}
+
+model Driver {
+  id             String       @id @default(cuid())
+  name           String
+  licenseNumber  String       @unique
+  licenseExpiry  DateTime
+  category       String       // e.g., "Van", "Truck"
+  status         DriverStatus @default(OFF_DUTY)
+  trips          Trip[]
+  safetyScore    Float        @default(100)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+enum TripStatus {
+  DRAFT
+  DISPATCHED
+  COMPLETED
+  CANCELLED
+}
+
+model Trip {
+  id             String     @id @default(cuid())
+  origin         String
+  destination    String
+  cargoWeight    Float
+  status         TripStatus @default(DRAFT)
+  vehicleId      String
+  driverId       String
+  vehicle        Vehicle    @relation(fields: [vehicleId], references: [id])
+  driver         Driver     @relation(fields: [driverId], references: [id])
+  finalOdometer  Float?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model MaintenanceLog {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id])
+  serviceType String
+  cost        Float
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  liters    Float?
+  cost      Float
+  date      DateTime @default(now())
+  type      String   @default("FUEL") // or "MAINTENANCE" (auto-linked)
+  createdAt DateTime @default(now())
+}
