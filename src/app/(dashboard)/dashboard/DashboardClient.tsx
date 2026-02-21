@@ -135,8 +135,8 @@ export default function DashboardClient({ initialFleetData }: { initialFleetData
                                     const styling = getStatusStyling(row.status);
                                     return (
                                         <tr key={i} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors group">
-                                            <td className="py-4 px-6 text-sm font-medium text-[var(--foreground)]">{row.id}</td>
-                                            <td className="py-4 px-6 text-sm text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors">
+                                            <td className="py-4 px-6 text-sm font-medium text-[var(--foreground)] whitespace-nowrap">{row.id}</td>
+                                            <td className="py-4 px-6 text-sm text-[var(--muted-foreground)] group-hover:text-[var(--foreground)] transition-colors whitespace-nowrap">
                                                 {row.vehicle}
                                             </td>
                                             <td className="py-4 px-6 text-sm font-medium">{row.driver}</td>
