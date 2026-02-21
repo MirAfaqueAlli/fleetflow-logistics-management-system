@@ -205,7 +205,11 @@ export default function PerformanceClient({ initialDrivers }: { initialDrivers: 
                                                     <span className={`font-mono text-sm ${isExpired ? 'text-rose-500 font-bold' : ''}`}>
                                                         {formatDate(driver.licenseExpiry)}
                                                     </span>
-                                                    {isExpired && <AlertOctagon size={16} className="text-rose-500" title="License Expired (System Locked)" />}
+                                                    {isExpired && (
+                                                        <span title="License Expired (System Locked)" className="flex items-center">
+                                                            <AlertOctagon size={16} className="text-rose-500" />
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6 font-medium">{driver.completionRate}%</td>
